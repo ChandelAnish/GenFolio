@@ -4,19 +4,9 @@ import React from "react";
 import Link from "next/link";
 import { Link as LinkIcon } from "lucide-react";
 import { motion } from "framer-motion";
+import { Project } from "@/types";
 
-export interface Technology {
-  name: string;
-}
-
-export interface ProjectCardProps {
-  title: string;
-  description: string;
-  technologies: Technology[];
-  link: string;
-}
-
-const ProjectCard: React.FC<ProjectCardProps> = ({
+const ProjectCard: React.FC<Project> = ({
   title,
   description,
   technologies,

@@ -3,8 +3,13 @@
 import React, { useRef } from "react";
 import { Camera, MessageCircle, Mail, UserCheck } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useAppSelector } from "@/store/hooks";
+
 
 const Hero = () => {
+
+  const introduction = useAppSelector(store=>store.introduction)
+
   const heroSection = useRef<HTMLDivElement>(null);
 
   const { scrollYProgress } = useScroll({
@@ -68,18 +73,17 @@ const Hero = () => {
                 Hello, It's Me
               </h2>
               <h1 className="text-white text-3xl sm:text-4xl md:text-5xl font-bold mb-2">
-                Anish Singh Chandel
+                {introduction.name}
               </h1>
               <div className="mb-4">
                 <span className="text-gray-300">And I'm a </span>
                 <span className="text-cyan-400 font-medium">
-                  Full-Stack Developer
+                  {introduction.designation}
                 </span>
               </div>
 
               <p className="text-gray-400 mb-6 max-w-md mx-auto md:mx-0 text-sm sm:text-base">
-                Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                Phasellus nulla sed sapien varius, cursus sapientis.
+                {introduction.about}
               </p>
 
               {/* Social Icons - Centered on mobile, left-aligned on larger screens */}
@@ -128,7 +132,7 @@ const Hero = () => {
                 <div className="absolute inset-0 bg-cyan-400 rounded-full opacity-20 blur-xl transform scale-110" />
                 <div className="relative w-48 h-48 sm:w-96 sm:h-96 md:w-72 md:h-72 lg:w-96 lg:h-96 bg-cyan-400 rounded-tl-full rounded-tr-full rounded-bl-full rounded-br-full overflow-hidden">
                   <img
-                    src="/anishIMG.jpg"
+                    src={introduction.profileImage}
                     alt="profile-picture"
                     className="w-full h-full object-cover"
                   />

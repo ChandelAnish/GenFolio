@@ -1,51 +1,15 @@
 "use client";
 
 import React from "react";
-import ProjectCard, { ProjectCardProps } from "./ProjectCard";
+import ProjectCard from "./ProjectCard";
 import { motion } from "framer-motion";
+import { useAppSelector } from "@/store/hooks";
 
-const projectsData: ProjectCardProps[] = [
-  {
-    title: "NeXCollab",
-    description:
-      "Real-Time Code Collaboration Platform built during a 36-hour hackathon. Led frontend development with a focus...",
-    technologies: [
-      { name: "ReactJS" },
-      { name: "ExpressJS" },
-      { name: "PeerJS" },
-      { name: "Socket.io" },
-    ],
-    link: "/projects/nexcollab",
-  },
-  {
-    title: "Zeph - AI Quiz Companion",
-    description:
-      "Advanced AI-powered quiz platform supporting multiple-choice, true/false, and short answer questions. Features...",
-    technologies: [
-      { name: "NextJS" },
-      { name: "Node.js" },
-      { name: "OpenAI" },
-      { name: "Document Processing" },
-    ],
-    link: "/projects/zeph",
-  },
-  {
-    title: "Sphere",
-    description:
-      "Feature-rich chat platform built with MERN stack, featuring group chat functionality and advanced security measures.",
-    technologies: [
-      { name: "MongoDB" },
-      { name: "Express" },
-      { name: "React" },
-      { name: "Node.js" },
-      { name: "Socket.io" },
-      { name: "Material UI" },
-    ],
-    link: "/projects/sphere",
-  },
-];
 
 const Projects: React.FC = () => {
+
+  const projectsData = useAppSelector(store=>store.projects)
+
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">

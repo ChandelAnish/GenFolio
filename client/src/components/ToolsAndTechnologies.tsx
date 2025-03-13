@@ -4,29 +4,13 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import TechStackCard from "./TechStackCard";
 import { ChevronDown } from "lucide-react";
+import { useAppSelector } from "@/store/hooks";
 
-interface Technology {
-  name: string;
-  icon: string;
-}
-
-const technologies: Technology[] = [
-  { name: "JavaScript", icon: "/icons/javascript.svg" },
-  { name: "TypeScript", icon: "/icons/typescript.svg" },
-  { name: "ReactJS", icon: "/icons/react.svg" },
-  { name: "NextJS", icon: "/icons/nextjs.svg" },
-  { name: "Redux", icon: "/icons/redux.svg" },
-  { name: "NodeJS", icon: "/icons/nodejs.svg" },
-  { name: "ExpressJS", icon: "/icons/express.svg" },
-  { name: "Python", icon: "/icons/python.svg" },
-  { name: "Firebase", icon: "/icons/firebase.svg" },
-  { name: "MySQL", icon: "/icons/mysql.svg" },
-  { name: "MongoDB", icon: "/icons/mongodb.svg" },
-  { name: "GraphQL", icon: "/icons/graphql.svg" },
-];
 
 const SkillsAndTechnologies: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
+
+  const technologies = useAppSelector(store=>store.toolsAndTechnologies)
 
   return (
     <section className="py-20 mt-9 bg-[#0f0e1a]/60">
@@ -38,7 +22,7 @@ const SkillsAndTechnologies: React.FC = () => {
           // viewport={{once: true}}
           className="text-4xl font-semibold text-center mb-16 bg-gradient-to-br from-white to-cyan-500 bg-clip-text text-transparent"
         >
-          Skills & Technologies
+          My Tech Arsenal
         </motion.h2>
 
         {/* Display the first 10 technologies */}
@@ -90,7 +74,6 @@ const SkillsAndTechnologies: React.FC = () => {
             <motion.div
               animate={{ rotate: expanded ? 180 : 0 }}
               transition={{
-                // repeat: !expanded ? Infinity : 0,
                 duration: 1.5,
                 ease: "easeInOut",
               }}

@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-export interface TechStackCardProps {
+interface TechStackCardProps {
   name: string;
   icon: string;
   index: number;

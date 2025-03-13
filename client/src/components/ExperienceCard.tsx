@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, useScroll, useTransform } from "framer-motion";
-import { LucideIcon } from "lucide-react";
+import { LucideIcon, Circle } from "lucide-react";
 import React, { useRef } from "react";
 
 interface ExperienceCardProps {
@@ -10,7 +10,6 @@ interface ExperienceCardProps {
   duration: string;
   description: string;
   highlights: string[];
-  icon: React.ReactNode;
   index: number;
 }
 
@@ -20,7 +19,6 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
   duration,
   description,
   highlights,
-  icon,
   index,
 }) => {
   const experienceCard = useRef<HTMLDivElement>(null);
@@ -47,7 +45,7 @@ const ExperienceCard: React.FC<ExperienceCardProps> = ({
                 before:absolute before:w-16 before:h-16 before:bg-cyan-400 before:opacity-40
                 before:rounded-full before:-z-10 before:animate-ping"
         >
-          {icon}
+          <Circle size={24}/>
         </div>
       </motion.div>
 

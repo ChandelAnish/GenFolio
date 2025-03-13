@@ -113,3 +113,20 @@ useTransform:
             <motion.div style={{ opacity }} className="h-screen bg-blue-500 flex justify-center items-center">
             <h1 className="text-white text-3xl">Scroll to See Me Fade In</h1>
             </motion.div>;
+
+
+**Yes, Redux typically works in client components in Next.js because Redux relies on React's state management, which is primarily designed to run in the browser.
+
+**ReturnType is a utility type in TypeScript that allows you to extract the return type of a function type. It is part of TypeScript's built-in utility types.
+
+
+*export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+    - withTypes is a TypeScript utility introduced in Redux Toolkit v2 to add type safety to the useDispatch and useSelector hooks.
+
+
+
+
+*** In Next.js (App Router), it is necessary to use named exports (GET, POST, PUT, DELETE, etc.) in a route.ts or route.js file to define API routes. This is because Next.js expects HTTP methods to be explicitly declared as named exports for handling requests.
+        - Next.js automatically maps HTTP methods (GET, POST, PUT, DELETE) to these named exports.
+        - Without named exports, Next.js won’t know how to handle different HTTP methods in the route.ts file.
+        - Dynamic API routing depends on these method-specific exports.
