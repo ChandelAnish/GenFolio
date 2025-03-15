@@ -13,3 +13,10 @@ Why Convert a File to a Data URL (Base64)?
 ****Whenever you return an object inside an arrow function without return, use () to enclose it.
         - In JavaScript, when using an arrow function without curly braces ({}), the function implicitly returns whatever comes after =>.
         - However, if you want to return an object, you need to wrap it in parentheses (()) because curly braces {} are interpreted as a function body, not an object.
+
+
+
+***setProfileData((prev) => ({ ...prev, [name]: value }));
+        -> the square brackets around [name] are necessary in this context. This is using JavaScript's computed property name syntax, and here's why it's needed:
+        -> When you write [name]: value, you're using the variable name to dynamically determine which property of the object to update.
+
