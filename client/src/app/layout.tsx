@@ -11,12 +11,15 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-
   return (
-    <StoreProvider>
-        <html lang="en">
-          <body>{children}</body>
-        </html>
-    </StoreProvider>
+    // <StoreProvider>
+    <html lang="en">
+      <body>
+        <div className="w-full min-h-screen flex flex-col justify-center bg-gradient-to-t from-cyan-700/30 to-black">
+          {children}
+        </div>
+      </body>
+    </html>
+    // </StoreProvider>
   );
 }

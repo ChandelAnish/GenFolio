@@ -1,17 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import introductionSliceReducer from './introduction'
-import experienceSliceReducer from './experiences'
-import projectsSliceReducer from './projects'
-import toolsAndTechnologiesSliceReducer from './toolsAndTechnologies'
-import connectSliceReducer from './connect'
 
 export const store = configureStore({
   reducer: {
-    introduction: introductionSliceReducer,
-    experiences: experienceSliceReducer,
-    projects: projectsSliceReducer,
-    toolsAndTechnologies: toolsAndTechnologiesSliceReducer,
-    connect: connectSliceReducer,
+    // introduction: introductionSliceReducer,
   }
 })
 

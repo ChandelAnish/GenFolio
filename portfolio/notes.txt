@@ -1,0 +1,132 @@
+tailwind class :
+    rounded-tr-full: This class applies a fully rounded border-radius to the top-right corner of the element.
+    rounded-bl-full: This class applies a fully rounded border-radius to the bottom-left corner of the element.
+    rounded-br-full: This class applies a fully rounded border-radius to the bottom-right corner of the element.
+
+    inset-0: Sets all four inset properties (top, right, bottom, left) to 0, making the element fill its containing block.
+    bg-gradient-to-br: Applies a background gradient that starts from the top-left corner and ends at the bottom-right corner.
+    from-purple-500/20: Sets the starting color of the gradient to a semi-transparent purple (purple-500 with 20% opacity).
+    to-transparent: Sets the ending color of the gradient to transparent.
+    pointer-events-none: Disables mouse interactions with the element.
+
+
+What is getBoundingClientRect()?
+    getBoundingClientRect() is a built-in JavaScript method that gives us the size and position of an element relative to the viewport (the visible part of the screen).
+
+    Think of it as a way to measure how big an element is and where it is located on the screen.
+
+    -> What is top?
+        top is a property from getBoundingClientRect() that tells us the distance from the top of the viewport (screen) to the top of the element.
+
+        -> If top is positive, the element is below the top of the screen.
+        -> If top is negative, the element is partially scrolled out of view (above the screen). i.e The element is now partially above the viewport.
+        -> If top is 0, the element is exactly at the top of the viewport.
+
+    -> What is height?
+        height is another property from getBoundingClientRect() that tells us how tall the element is (in pixels).
+
+        It does not change when scrolling. It just represents the element's total height.
+
+What is window.innerHeight?
+    window.innerHeight is a built-in JavaScript property that returns the height of the visible area (viewport) of the browser window in pixels.
+
+
+***When an element has absolute positioning, it is removed from the normal document flow.
+        - This means the parent’s flexbox rules (like flex-col) don’t apply to them.
+        - Instead, their position is controlled by top, left, right, and bottom values.
+
+
+
+
+For Gradient Text :
+    1. bg-clip-text (Background Clipping)
+        - The bg-clip-text class ensures that the background only applies to the text itself rather than the entire element.
+        - Normally, a background gradient is applied to the whole element, but this class clips it to the shape of the text.
+        - Use the bg-clip-text utility to crop an element's background to match the shape of the text.
+    2. text-transparent (Transparent Text)
+        - The text-transparent class makes the actual text color fully transparent, so the underlying gradient background is visible instead.
+        - Without this, the default text color would cover the gradient.
+
+
+**const ExperienceCard: React.FC<ExperienceCardProps> = ({ company, role, duration, description, highlights, icon, index })=>{...}
+        React.FC<ExperienceCardProps> - This tells React that:
+                -This is a "Function Component" (FC)
+                - It accepts props that must match the structure defined in ExperienceCardProps (which is an interface defined earlier in the code)
+
+
+
+*      <motion.div
+        className="p-6 bg-gradient-to-br from-cyan-900 to-slate-900 rounded-xl shadow-lg text-white max-w-2xl"
+        initial={{ opacity: 0, x: 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.6, delay: index * 0.2 }}
+        viewport={{ once: true }}
+      />
+
+      -> The viewport property allows you to define how and when an animation should run when the element enters the visible area of the screen.
+            - once: true → Ensures the animation only runs once when the element first enters the viewport.
+            - once: false (default) → The animation will run every time the element enters the viewport.
+
+
+        *Trigger Animation Sooner (Custom Threshold)
+                viewport={{ amount: 0.5 }} 
+                    - amount: 0.5 → Triggers when 50% of the element is in the viewport.
+                    - Default is 0.25 (25% of the element visible).
+        *Detect Only When Fully Visible
+            viewport={{ amount: 1 }}
+                - Triggers only when the entire element is visible in the viewport.
+
+
+
+**The offset property in 'useScroll' defines when the scroll tracking starts and ends relative to the viewport and the target element.
+
+        - "start start" -> The top of the target element (start) aligns with the top of the viewport (start).
+        - "end start" ->	The bottom of the target element (end) aligns with the top of the viewport (start).
+
+        - ["start end", "end end"] -> Starts when the top of the element reaches the bottom of the viewport and ends when the bottom of the element reaches the bottom of the viewport.
+        - ["center center", "center start"] -> Starts when the element’s center aligns with the viewport’s center and ends when its center reaches the top.
+        - ["start center", "end center"] -> Starts when the top of the element reaches the center of the viewport and ends when the bottom reaches the center.
+
+
+
+
+useTransform:
+
+    useTransform is a hook in Framer Motion that maps (or converts) one value into another. It is mainly used to create smooth scrolling effects, parallax animations, and progress-based UI changes.
+
+    How Does It Work?
+        Think of useTransform as a converter:
+            - You take one value (like scrollYProgress → how much you've scrolled).
+            - You map it to another range (like opacity, scale, rotation, etc.).
+
+    Syntax:
+        const newValue = useTransform(inputValue, [inputStart, inputEnd], [outputStart, outputEnd]);
+
+        [inputStart, inputEnd] → The range of the input value (e.g., scrollY or scrollYProgress).
+        [outputStart, outputEnd] → The range of the output value (e.g., opacity, scale, position, color, etc.).
+
+    Example : Scroll Progress to Opacity
+
+            const { scrollYProgress } = useScroll(); // Scroll progress (0 to 1)
+            const opacity = useTransform(scrollYProgress, [0, 1], [0, 1]); // Map 0 → 1
+
+            <motion.div style={{ opacity }} className="h-screen bg-blue-500 flex justify-center items-center">
+            <h1 className="text-white text-3xl">Scroll to See Me Fade In</h1>
+            </motion.div>;
+
+
+**Yes, Redux typically works in client components in Next.js because Redux relies on React's state management, which is primarily designed to run in the browser.
+
+**ReturnType is a utility type in TypeScript that allows you to extract the return type of a function type. It is part of TypeScript's built-in utility types.
+
+
+*export const useAppDispatch = useDispatch.withTypes<AppDispatch>()
+    - withTypes is a TypeScript utility introduced in Redux Toolkit v2 to add type safety to the useDispatch and useSelector hooks.
+
+
+
+
+*** In Next.js (App Router), it is necessary to use named exports (GET, POST, PUT, DELETE, etc.) in a route.ts or route.js file to define API routes. This is because Next.js expects HTTP methods to be explicitly declared as named exports for handling requests.
+        - Next.js automatically maps HTTP methods (GET, POST, PUT, DELETE) to these named exports.
+        - Without named exports, Next.js won’t know how to handle different HTTP methods in the route.ts file.
+        - Dynamic API routing depends on these method-specific exports.

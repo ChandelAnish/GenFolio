@@ -1,10 +1,12 @@
-import axios from "axios";
 import ActionDispatchWrapper from "@/components/ActionDispatchWrapper";
+import StoreProvider from "@/store/StoreProvider";
 import { PortfolioData } from "@/types";
+import axios from "axios";
+import "./globals.css";
 
 export const metadata = {
-  title: "myPortfolio",
-  description: "Portfolio generating website111",
+  title: "my-Portfolio",
+  description: "my Portfolio website",
 };
 
 const getPortfolioData = async () => {
@@ -20,5 +22,13 @@ export default async function RootLayout({
 }) {
   const data: PortfolioData = await getPortfolioData();
 
-  return <ActionDispatchWrapper data={data}>{children}</ActionDispatchWrapper>;
+  return (
+    <StoreProvider>
+      <ActionDispatchWrapper data={data}>
+        <html lang="en">
+          <body>{children}</body>
+        </html>
+      </ActionDispatchWrapper>
+    </StoreProvider>
+  );
 }
