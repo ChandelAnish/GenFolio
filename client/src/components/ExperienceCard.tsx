@@ -1,7 +1,7 @@
 // components/ExperienceCard.tsx
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Experience } from "./AddExperience";
+import { Experience } from "@/types"; 
 
 interface ExperienceCardProps {
   experience: Experience;

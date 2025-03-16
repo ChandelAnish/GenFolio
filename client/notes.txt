@@ -20,3 +20,6 @@ Why Convert a File to a Data URL (Base64)?
         -> the square brackets around [name] are necessary in this context. This is using JavaScript's computed property name syntax, and here's why it's needed:
         -> When you write [name]: value, you're using the variable name to dynamically determine which property of the object to update.
 
+
+
+*In Tailwind CSS, the space-y-4 class is used to add vertical spacing between child elements inside a container.

@@ -5,26 +5,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SearchGithubUsers from './SearchGithubUsers';
 import Repositories from './Repositories';
+import { GithubUser, Project, Repository } from '@/types';
+import { useAppDispatch } from '@/hooks/customHooks';
+import { fillProjects } from '@/store/portfolioDetailsSlice';
 
 
-// Types
-export interface GithubUser {
-  id: number;
-  login: string;
-  avatar_url: string;
-  html_url: string;
-}
 
-export interface Repository {
-  id: number;
-  name: string;
-  description: string | null;
-  html_url: string;
-  stargazers_count: number;
-  language: string | null;
-  updated_at: string;
-  fork: boolean;
-}
 
 export default function GitHubSearch() {
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -33,6 +19,7 @@ export default function GitHubSearch() {
   const [error, setError] = useState<string | null>(null);
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
+  const dispatch = useAppDispatch()
 
   // Search for GitHub users on input change
   useEffect(() => {
@@ -76,13 +63,13 @@ export default function GitHubSearch() {
   };
 
   const handleContinue = () => {
-    const selectedReposInfo = selectedRepos.map(repo => ({
-      name: repo.name,
-      url: repo.html_url,
+    const selectedReposInfo: Project[] = selectedRepos.map(repo => ({
+      title: repo.name,
       description: repo.description,
-      language: repo.language
+      technologies: repo.topics,
+      link: repo.html_url
     }));
-    
+    dispatch(fillProjects(selectedReposInfo))
     console.log(selectedReposInfo);
   };
 
@@ -133,7 +120,7 @@ export default function GitHubSearch() {
                     disabled={selectedRepos.length === 0}
                     className={`w-full py-3 rounded-md text-white font-medium transition-colors ${
                       selectedRepos.length > 0 
-                        ? 'bg-gradient-to-br from-white/70 to-cyan-500/70 hover:bg-cyan-700' 
+                        ? 'bg-cyan-600/90 hover:bg-cyan-700' 
                         : 'bg-gray-400/40 cursor-not-allowed'
                     }`}
                   >

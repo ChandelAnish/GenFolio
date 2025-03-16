@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
+import portfolioDetailsSliceReducer from './portfolioDetailsSlice'
 
 export const store = configureStore({
   reducer: {
-    // introduction: introductionSliceReducer,
+    portfolioDetails: portfolioDetailsSliceReducer,
   }
 })
 

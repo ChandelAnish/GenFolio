@@ -6,14 +6,12 @@ import { PlusIcon } from "@heroicons/react/24/outline";
 import { AnimatePresence, motion } from "framer-motion";
 import ExperienceCard from "./ExperienceCard";
 import ExperienceForm from "./ExperienceForm";
+import { useRouter } from "next/navigation";
+import { Experience } from "@/types";
+import { useAppDispatch, useAppSelector } from "@/hooks/customHooks";
+import { fillExperiences } from "@/store/portfolioDetailsSlice";
 
-export interface Experience {
-  company: string;
-  role: string;
-  duration: string;
-  description: string;
-  highlights: string[];
-}
+
 
 const defaultExperience: Experience = {
   company: "",
@@ -24,6 +22,10 @@ const defaultExperience: Experience = {
 };
 
 export default function AddExperience() {
+
+  const router = useRouter()
+  const dispatch = useAppDispatch()
+
   const [experiences, setExperiences] = useState<Experience[]>([
     defaultExperience,
   ]);
@@ -73,6 +75,8 @@ export default function AddExperience() {
   const handleContinue = () => {
     const validExperiences = experiences.filter((exp) => exp.company !== "");
     console.log(validExperiences);
+    dispatch(fillExperiences(validExperiences))
+    router.push("/portfolio-details/add-projects")
   };
 
   return (
@@ -136,7 +140,7 @@ export default function AddExperience() {
             whileTap={{ scale: 0.99 }}
             layout
             onClick={startNewExperience}
-            className="flex items-center justify-center w-full py-3 border-2 border-dashed border-gray-700 rounded-lg text-cyan-400 hover:border-cyan-500 hover:text-cyan-300 transition-colors"
+            className="flex items-center justify-center w-full py-3 border-2 border-dashed border-gray-700 rounded-lg text-cyan-400 hover:border-cyan-500 hover:text-cyan-300 transition-colors max-w-2xl mx-auto"
           >
             <PlusIcon className="w-5 h-5 mr-2" />
             Add New Experience
@@ -149,7 +153,7 @@ export default function AddExperience() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2 }}
-            className="mt-8"
+            className="mt-8 max-w-2xl mx-auto"
           >
             <button
               onClick={handleContinue}
@@ -159,6 +163,8 @@ export default function AddExperience() {
             </button>
           </motion.div>
         )}
+
+        
       </motion.div>
     </AnimatePresence>
   );

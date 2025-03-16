@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Repository } from './GitHubSearch';
+import { Repository } from '@/types';
 
 interface RepositoriesProps {
   username: string;
@@ -65,7 +65,7 @@ const Repositories: React.FC<RepositoriesProps> = ({
               <div className="flex items-start">
                 <div className="flex-grow">
                   <div className="flex items-center flex-wrap">
-                    <h3 className="text-lg font-medium">
+                    <h3 className="text-md font-medium">
                       {repo.name}
                     </h3>
                   </div>

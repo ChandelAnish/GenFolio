@@ -1,5 +1,5 @@
 import React from 'react';
-import { GithubUser } from './GitHubSearch';
+import { GithubUser } from '@/types';
 
 interface SearchGithubUsersProps {
   searchQuery: string;
