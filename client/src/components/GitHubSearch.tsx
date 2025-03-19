@@ -7,7 +7,8 @@ import SearchGithubUsers from './SearchGithubUsers';
 import Repositories from './Repositories';
 import { GithubUser, Project, Repository } from '@/types';
 import { useAppDispatch } from '@/hooks/customHooks';
-import { fillProjects } from '@/store/portfolioDetailsSlice';
+import { fillInitialProfileDetails, fillProjects } from '@/store/portfolioDetailsSlice';
+import { useRouter } from 'next/navigation'; 
 
 
 
@@ -20,6 +21,20 @@ export default function GitHubSearch() {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
   const dispatch = useAppDispatch()
+  const router = useRouter()
+
+  useEffect(() => {
+    // load profile data details from session storage
+    const sessionProfileData = JSON.parse(
+      sessionStorage.getItem("portfolioDetails") ?? "{}"
+    );
+    if (Object.keys(sessionProfileData).length != 0) {
+      // console.log(sessionProfileData);
+      dispatch(fillInitialProfileDetails(sessionProfileData));
+      setSelectedUser(sessionStorage.getItem("selectedGithubUser"))
+      setSelectedRepos(sessionProfileData.projects)
+    }
+  },[]);
 
   // Search for GitHub users on input change
   useEffect(() => {
@@ -64,13 +79,16 @@ export default function GitHubSearch() {
 
   const handleContinue = () => {
     const selectedReposInfo: Project[] = selectedRepos.map(repo => ({
+      id: repo.id,
       title: repo.name,
       description: repo.description,
       technologies: repo.topics,
       link: repo.html_url
     }));
+    sessionStorage.setItem("selectedGithubUser",selectedUser ?? '')
     dispatch(fillProjects(selectedReposInfo))
-    console.log(selectedReposInfo);
+    // console.log(selectedReposInfo);
+    router.push('/portfolio-details/add-skills')
   };
 
   return (
@@ -105,6 +123,7 @@ export default function GitHubSearch() {
                     </svg>
                     Back
                   </button>
+                  {/* <span className='text-xs font-bold text-cyan-500/90'>{selectedUser}</span> */}
                   <span className="text-sm text-gray-500">{selectedRepos.length} selected</span>
                 </div>
                 

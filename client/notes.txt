@@ -23,3 +23,73 @@ Why Convert a File to a Data URL (Base64)?
 
 
 *In Tailwind CSS, the space-y-4 class is used to add vertical spacing between child elements inside a container.
+
+
+
+*reduce function:
+
+        The reduce function in JavaScript is used to take an array and reduce it to a single value. It works by applying a function to each element in the array, carrying forward a cumulative result.
+
+        How It Works 
+                - It goes through each item in the array.
+                - It keeps adding (or processing) the items based on the given function.
+                - It finally returns a single value.
+
+        Syntax:
+                array.reduce(callback, initialValue)
+                        - callback: A function that runs on each element.
+                        - initialValue: The starting value (optional but recommended)
+
+        Example: Sum of Numbers
+
+                const numbers = [1, 2, 3, 4, 5];
+                const sum = numbers.reduce((accumulator, currentValue) => {
+                return accumulator + currentValue;
+                }, 0);
+                console.log(sum); // Output: 15
+
+                - accumulator starts at 0 (initial value).
+                - currentValue goes through each number.
+                - Adds each number to accumulator, resulting in 15.
+
+
+
+*Record:
+        - Record is a utility type in TypeScript.
+        - It allows you to define the types for the keys and values of an object.
+
+        eg: The Record<string, Skill[]> is a TypeScript type that defines an object where:
+                - The keys are strings (string).
+                - The values are arrays of Skill objects (Skill[]).
+
+
+
+*flat() function:
+        The flat() function in JavaScript is used to flatten an array, meaning it removes nested arrays and creates a single-level array.
+
+        Example : 
+                const arr = [1, 2, [3, 4], [5, 6]];
+                const flatArr = arr.flat();
+                console.log(flatArr); // Output: [1, 2, 3, 4, 5, 6]
+
+
+
+*sessionStorage.getItem('profileData') can return null if the key does not exist in the storage. However, JSON.parse() expects a string as its argument, and null is not a valid input for it.
+
+        Fix:
+                Use the nullish coalescing (??) or logical OR (||) operator to provide a fallback value:
+
+                        const a = JSON.parse(sessionStorage.getItem('profileData') ?? '{}');
+
+
+
+
+
+
+
+***Making API Calls in a Next.js route.ts File
+        -> Since route.ts files are server-side route handlers in Next.js App Router (app/api), you can make backend-to-backend API calls using libraries like fetch or axios.
+        -> ✅ Works for: Calling external APIs (e.g., third-party APIs, internal microservices).
+        -> ❌ Doesn't Work for: Calling the same API route from itself (causes infinite loop).
+        -> If you want to call your own Next.js API route from another API route (route.ts), you should directly import the function instead of making an HTTP request.
+

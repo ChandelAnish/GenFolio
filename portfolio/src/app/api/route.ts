@@ -24,48 +24,8 @@ export async function GET() {
           "Enhanced system scalability and integration",
         ],
       },
-      {
-        id: 2,
-        company: "Englience AI Labs",
-        role: "Full Stack Engineer (AI - Intern)",
-        duration: "Sep 2024 - Dec 2024",
-        description:
-          "Working on AI-driven course generation and activity creation systems.",
-        highlights: [
-          "Refactored codebase using SOLID principles",
-          "Integrated knowledge base for custom document uploads",
-          "Developed AI agent for generating 6 types of activities",
-          "Enhanced system scalability and integration",
-        ],
-      },
-      {
-        id: 3,
-        company: "Englience AI Labs",
-        role: "Full Stack Engineer (AI - Intern)",
-        duration: "Sep 2024 - Dec 2024",
-        description:
-          "Working on AI-driven course generation and activity creation systems.",
-        highlights: [
-          "Refactored codebase using SOLID principles",
-          "Integrated knowledge base for custom document uploads",
-          "Developed AI agent for generating 6 types of activities",
-          "Enhanced system scalability and integration",
-        ],
-      },
     ],
     projects: [
-      {
-        title: "NeXCollab",
-        description:
-          "Real-Time Code Collaboration Platform built during a 36-hour hackathon. Led frontend development with a focus...",
-        technologies: [
-          { name: "ReactJS" },
-          { name: "ExpressJS" },
-          { name: "PeerJS" },
-          { name: "Socket.io" },
-        ],
-        link: "/projects/nexcollab",
-      },
       {
         title: "NeXCollab",
         description:

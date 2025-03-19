@@ -2,7 +2,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { Experience } from "@/types"; 
+import { Experience } from "@/types";
 
 interface ExperienceFormProps {
   experience: Experience;
@@ -55,12 +55,6 @@ export default function ExperienceForm({
   };
 
   const handleSubmit = () => {
-    // Basic validation
-    if (!experience.company || !experience.role || !experience.duration) {
-      alert("Please fill in company, role, and duration fields");
-      return;
-    }
-
     // Filter out empty highlights
     const filteredHighlights = experience.highlights.filter(
       (h) => h.trim() !== ""
@@ -86,128 +80,133 @@ export default function ExperienceForm({
         </h2>
 
         <div className="space-y-5">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div>
-              <label className="font-semibold block text-sm font-medium text-gray-300 mb-1">
-                Company
-              </label>
-              <input
-                type="text"
-                name="company"
-                value={experience.company}
-                onChange={handleInputChange}
-                className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="font-semibold block text-sm font-medium text-gray-300 mb-1">
-                Role
-              </label>
-              <input
-                type="text"
-                name="role"
-                value={experience.role}
-                onChange={handleInputChange}
-                className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
-                required
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="font-semibold block text-sm font-medium text-gray-300 mb-1">
-              Duration (e.g., "Sep 2024 - Dec 2024")
-            </label>
-            <input
-              type="text"
-              name="duration"
-              value={experience.duration}
-              onChange={handleInputChange}
-              className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="font-semibold block text-sm font-medium text-gray-300 mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              value={experience.description}
-              onChange={handleInputChange}
-              rows={3}
-              className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
-            />
-          </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-2">
-              <label className="font-semibold block text-sm font-medium text-gray-300">
-                Highlights
-              </label>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                type="button"
-                onClick={addHighlight}
-                className="text-sm bg-gray-700/70 text-cyan-400 py-1 px-3 rounded hover:bg-gray-600/70 inline-flex items-center"
-              >
-                <PlusIcon className="w-4 h-4 mr-1" />
-                Add Highlight
-              </motion.button>
-            </div>
-
-            {experience.highlights.map((highlight, index) => (
-              <motion.div
-                key={index}
-                className="flex items-center space-x-2 mb-3"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
+              <div>
+                <label className="font-semibold block text-sm text-gray-300 mb-1">
+                  Company
+                </label>
                 <input
                   type="text"
-                  value={highlight}
-                  onChange={(e) => handleHighlightChange(index, e.target.value)}
-                  className="flex-grow bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
-                  placeholder="Add a key accomplishment or responsibility"
+                  name="company"
+                  value={experience.company}
+                  onChange={handleInputChange}
+                  className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
+                  required
                 />
-                <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.9 }}
-                  type="button"
-                  onClick={() => removeHighlight(index)}
-                  className="text-red-400 hover:text-red-300"
-                  disabled={experience.highlights.length === 1}
-                >
-                  <TrashIcon className="w-5 h-5" />
-                </motion.button>
-              </motion.div>
-            ))}
-          </div>
+              </div>
 
-          <div className="flex flex-col sm:flex-row gap-3 pt-2">
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="button"
-              onClick={handleSubmit}
-              className="bg-cyan-500/70 text-white px-4 py-2 rounded-md hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-            >
-              {editMode ? "Update Experience" : "Save Experience"}
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              type="button"
-              onClick={onCancel}
-              className="bg-gray-700/70 text-gray-300 px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
-            >
-              Cancel
-            </motion.button>
-          </div>
+              <div>
+                <label className="font-semibold block text-sm text-gray-300 mb-1">
+                  Role
+                </label>
+                <input
+                  type="text"
+                  name="role"
+                  value={experience.role}
+                  onChange={handleInputChange}
+                  className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
+                  required
+                />
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label className="font-semibold block text-sm text-gray-300 mb-1">
+                Duration (e.g., "Sep 2024 - Dec 2024")
+              </label>
+              <input
+                type="text"
+                name="duration"
+                value={experience.duration}
+                onChange={handleInputChange}
+                className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
+                required
+              />
+            </div>
+
+            <div className="mb-2">
+              <label className="font-semibold block text-sm text-gray-300 mb-1">
+                Description
+              </label>
+              <textarea
+                name="description"
+                value={experience.description}
+                onChange={handleInputChange}
+                rows={3}
+                className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
+                required
+              />
+            </div>
+
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="font-semibold block text-sm text-gray-300">
+                  Highlights
+                </label>
+                <motion.button
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  type="button"
+                  onClick={addHighlight}
+                  className="text-sm bg-gray-700/70 text-cyan-400 py-1 px-3 rounded hover:bg-gray-600/70 inline-flex items-center"
+                >
+                  <PlusIcon className="w-4 h-4 mr-1" />
+                  Add Highlight
+                </motion.button>
+              </div>
+
+              {experience.highlights.map((highlight, index) => (
+                <motion.div
+                  key={index}
+                  className="flex items-center space-x-2 mb-3"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                >
+                  <input
+                    type="text"
+                    required= {index === 0}
+                    value={highlight}
+                    onChange={(e) =>
+                      handleHighlightChange(index, e.target.value)
+                    }
+                    className="flex-grow bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
+                    placeholder="Add a key accomplishment or responsibility"
+                  />
+                  <motion.button
+                    whileHover={{ scale: 1.1 }}
+                    whileTap={{ scale: 0.9 }}
+                    type="button"
+                    onClick={() => removeHighlight(index)}
+                    className="text-red-400 hover:text-red-300"
+                    disabled={experience.highlights.length === 1}
+                  >
+                    <TrashIcon className="w-5 h-5" />
+                  </motion.button>
+                </motion.div>
+              ))}
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="submit"
+                className="bg-cyan-500/70 text-white px-4 py-2 rounded-md hover:bg-cyan-600 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                {editMode ? "Update Experience" : "Save Experience"}
+              </motion.button>
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                type="button"
+                onClick={onCancel}
+                className="bg-gray-700/70 text-gray-300 px-4 py-2 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-800"
+              >
+                Cancel
+              </motion.button>
+            </div>
+          </form>
         </div>
       </motion.div>
     </div>

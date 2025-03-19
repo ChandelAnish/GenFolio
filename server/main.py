@@ -2,13 +2,14 @@ from fastapi import FastAPI, Depends
 from sqlmodel import SQLModel, Session
 from .db import engine, get_session
 from typing import Annotated
-from .routers import mealList, users
+from .routers import portfolioData, users
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 origins = [
-    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://localhost:4000",
 ]
 
 app.add_middleware(
@@ -31,5 +32,5 @@ def on_startup():
 #including the users router
 app.include_router(users.router)
 
-#including the mealList router
-app.include_router(mealList.router)
+#including the portfolio router
+app.include_router(portfolioData.router)

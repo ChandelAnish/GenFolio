@@ -16,25 +16,25 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
 import { ProfileData } from "@/types";
 import { useAppDispatch, useAppSelector } from "@/hooks/customHooks";
-import { fillprofileDetails } from "@/store/portfolioDetailsSlice";
+import {
+  fillInitialProfileDetails,
+  fillprofileDetails,
+} from "@/store/portfolioDetailsSlice";
 interface GitHubValidationStatus {
   status: "checking" | "valid" | "invalid" | "idle";
   avatarUrl: string | null;
 }
 
 const ProfileComponent: React.FC = () => {
-  // const [profileData, setProfileData] = useState<ProfileData>({
-  //   name: "",
-  //   githubUsername: "",
-  //   linkedinUsername: "",
-  //   email: "",
-  //   designation: "",
-  //   about: "",
-  //   profileImage: null,
-  // });
-  const profileData = useAppSelector(
-    (store) => store.portfolioDetails.profileData
-  );
+  const [profileData, setProfileData] = useState<ProfileData>({
+    name: "",
+    githubUsername: "",
+    linkedinUsername: "",
+    email: "",
+    designation: "",
+    about: "",
+    profileImage: null,
+  });
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -46,6 +46,18 @@ const ProfileComponent: React.FC = () => {
     });
 
   const debouncedGithubUsername = useDebounce(profileData.githubUsername, 500);
+
+  useEffect(() => {
+    // load profile data details from session storage
+    const sessionProfileData = JSON.parse(
+      sessionStorage.getItem("portfolioDetails") ?? "{}"
+    );
+    if (Object.keys(sessionProfileData).length != 0) {
+      // console.log(sessionProfileData)
+      dispatch(fillInitialProfileDetails(sessionProfileData));
+      setProfileData(sessionProfileData.profileData)
+    }
+  }, []);
 
   // Check GitHub username validity
   useEffect(() => {
@@ -72,16 +84,10 @@ const ProfileComponent: React.FC = () => {
           profileData.profileImage.includes("githubusercontent.com")
         ) {
           // console.log(response.data.avatar_url);
-          // setProfileData((prev) => ({
-          //   ...prev,
-          //   profileImage: response.data.avatar_url,
-          // }));
-          dispatch(
-            fillprofileDetails({
-              ...profileData,
-              profileImage: response.data.avatar_url,
-            })
-          );
+          setProfileData((prev) => ({
+            ...prev,
+            profileImage: response.data.avatar_url,
+          }));
         }
       } catch (error) {
         setGithubValidation({ status: "invalid", avatarUrl: null });
@@ -97,8 +103,7 @@ const ProfileComponent: React.FC = () => {
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ): void => {
     const { name, value } = e.target;
-    // setProfileData((prev) => ({ ...prev, [name]: value }));
-    dispatch(fillprofileDetails({ ...profileData, [name]: value }));
+    setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -108,16 +113,15 @@ const ProfileComponent: React.FC = () => {
 
       reader.onload = (event: ProgressEvent<FileReader>) => {
         if (event.target && event.target.result) {
-          // setProfileData((prev) => ({
-          //   ...prev,
-          //   profileImage: event.target?.result as string,
-          //   /*
-          //   event.target.result:
-          //   - This contains the file data URL, which is a Base64-encoded string representing the image.
-          //   - Example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
-          //   */
-          // }));
-          dispatch(fillprofileDetails({ ...profileData, profileImage: event.target?.result as string }));
+          setProfileData((prev) => ({
+            ...prev,
+            profileImage: event.target?.result as string,
+            /*
+            event.target.result:
+            - This contains the file data URL, which is a Base64-encoded string representing the image.
+            - Example: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAA..."
+            */
+          }));
         }
       };
       /*
@@ -144,17 +148,23 @@ const ProfileComponent: React.FC = () => {
       setLoading(true);
       if (profileData.profileImage) {
         const { data } = await axios.post(
-          "http://localhost:3000/portfolio-details/add-profile-details/api",
-          { profileImage: profileData.profileImage, name: profileData.name }
+          "http://localhost:4000/portfolio-details/add-profile-details/api",
+          { profileImage: profileData.profileImage, name: profileData.email }
         );
-        // setProfileData((prev) => ({
-        //   ...prev,
-        //   profileImage: data.profileImageURL,
-        // }));
+        setProfileData((prev) => ({
+          ...prev,
+          profileImage: data.profileImageURL,
+        }));
         // console.log(data.profileImageURL);
-        dispatch(fillprofileDetails({ ...profileData, profileImage: data.profileImageURL }));
+
+        dispatch(
+          fillprofileDetails({
+            ...profileData,
+            profileImage: data.profileImageURL,
+          })
+        );
       }
-      console.log("Profile Data:", profileData);
+      // console.log("Profile Data:", profileData);
       setLoading(false);
       router.push("/portfolio-details/add-experience");
     } catch (error) {

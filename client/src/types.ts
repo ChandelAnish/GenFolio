@@ -25,6 +25,7 @@ export interface Repository {
 }
 
 export interface Project {
+  id: number
   title: string;
   description: string | null;
   technologies: string[] | [];
@@ -40,3 +41,8 @@ export interface ProfileData {
   profileImage: string | null;
 }
 
+export interface Skill {
+  id: string;
+  name: string;
+  category: "frontend" | "backend" | "database" | "devops" | "mobile" | "other";
+}

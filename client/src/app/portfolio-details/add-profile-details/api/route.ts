@@ -1,7 +1,7 @@
 import { v2 as cloudinary } from "cloudinary";
 import { NextRequest, NextResponse } from "next/server";
 
-async function uploadImageToCloudinary(profileImage: string, name: string) {
+async function uploadImageToCloudinary(profileImage: string, username: string) {
   // Configuration
   cloudinary.config({
     cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -12,7 +12,7 @@ async function uploadImageToCloudinary(profileImage: string, name: string) {
   // Upload an image
   const uploadResult = await cloudinary.uploader
     .upload(profileImage, {
-      public_id: `profileImage-${name}`,
+      public_id: `profileImage-${username}`,
     })
     .catch((error) => {
       console.log(error);
@@ -22,9 +22,9 @@ async function uploadImageToCloudinary(profileImage: string, name: string) {
 }
 
 export async function POST(req: NextRequest) {
-  const { profileImage, name } = await req.json();
+  const { profileImage, username } = await req.json();
   try {
-    const profileImageURL = await uploadImageToCloudinary(profileImage, name);
+    const profileImageURL = await uploadImageToCloudinary(profileImage, username);
     console.log(profileImageURL);
     return NextResponse.json({ profileImageURL });
   } catch {
