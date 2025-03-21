@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "./store";
-import { Introduction, Theme } from "@/types";
+// import type { RootState } from "./store";
+import { Theme } from "@/types";
 
 // Define the initial state using that type
 const defaultTheme: Theme = {

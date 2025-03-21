@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { Github, Linkedin, Mail, Eye } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
+import Image from "next/image";
 
 // const heroTheme= {
 //   sectionBackground: "bg-gray-800",
@@ -88,13 +89,13 @@ const Hero = () => {
             {/* Left Content */}
             <div className="w-full md:w-1/2 mb-8 md:mb-0 text-center md:text-left">
               <h2 className={`${heroTheme.subheading} text-lg sm:text-xl mb-2`}>
-                Hello, It's Me
+                Hello, It&apos;s Me
               </h2>
               <h1 className={`${heroTheme.heading} text-3xl sm:text-4xl md:text-5xl font-bold mb-2`}>
                 {introduction.name}
               </h1>
               <div className="mb-4">
-                <span className={`${heroTheme.navLink}`}>And I'm a </span>
+                <span className={`${heroTheme.navLink}`}>And I&apos;m a </span>
                 <span className={`${heroTheme.accentColor} font-medium`}>
                   {introduction.designation}
                 </span>
@@ -148,10 +149,12 @@ const Hero = () => {
               <div className="relative">
                 <div className={`absolute inset-0 ${heroTheme.accentBackground} rounded-full opacity-20 blur-xl transform scale-110`} />
                 <div className={`relative w-48 h-48 sm:w-96 sm:h-96 md:w-72 md:h-72 lg:w-96 lg:h-96 ${heroTheme.accentBackground} rounded-tl-full rounded-tr-full rounded-bl-full rounded-br-full overflow-hidden`}>
-                  <img
+                  <Image
                     src={introduction.profileImage}
                     alt="profile-picture"
                     className="w-full h-full object-cover"
+                    width={100}
+                    height={100}
                   />
                 </div>
               </div>

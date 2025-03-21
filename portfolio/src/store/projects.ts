@@ -1,46 +1,62 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "./store";
+// import type { RootState } from "./store";
 import { Project } from "@/types";
 
 // Define the initial state using that type
 const initialState: Project[] = [
   {
-    title: "NeXCollab",
-    description:
-      "Real-Time Code Collaboration Platform built during a 36-hour hackathon. Led frontend development with a focus...",
+    title: "FusionFLOW",
+    description: "A dynamic social connectivity and productivity web app with real-time chat, video calling, email messaging, location tracking, and expense management.",
     technologies: [
       { name: "ReactJS" },
-      { name: "ExpressJS" },
-      { name: "PeerJS" },
-      { name: "Socket.io" },
-    ],
-    link: "/projects/nexcollab",
-  },
-  {
-    title: "Zeph - AI Quiz Companion",
-    description:
-      "Advanced AI-powered quiz platform supporting multiple-choice, true/false, and short answer questions. Features...",
-    technologies: [
-      { name: "NextJS" },
       { name: "Node.js" },
-      { name: "OpenAI" },
-      { name: "Document Processing" },
+      { name: "MongoDB" },
+      { name: "WebRTC" },
+      { name: "WebSocket" }
     ],
-    link: "/projects/zeph",
+    link: "/projects/fusionflow",
   },
   {
-    title: "Sphere",
-    description:
-      "Feature-rich chat platform built with MERN stack, featuring group chat functionality and advanced security measures.",
+    title: "HireHub",
+    description: "A labor hiring platform where recruiters post jobs, and laborers apply and get hired. Features secure authentication and admin monitoring.",
     technologies: [
-      { name: "MongoDB" },
-      { name: "Express" },
+      { name: "Next.js" },
+      { name: "Prisma ORM" },
+      { name: "MySQL" },
+      { name: "Tailwind CSS" }
+    ],
+    link: "/projects/hirehub",
+  },
+  {
+    title: "Rakshak",
+    description: "A disaster management web app for real-time disaster tracking, emergency alerts, and resource coordination.",
+    technologies: [
       { name: "React" },
       { name: "Node.js" },
-      { name: "Socket.io" },
-      { name: "Material UI" },
+      { name: "MongoDB" },
+      { name: "Leaflet.js" }
     ],
-    link: "/projects/sphere",
+    link: "/projects/rakshak",
+  },
+  {
+    title: "NutriTrack",
+    description: "An AI-powered mobile app that generates diet plans, tracks meals and water intake, and monitors health progress.",
+    technologies: [
+      { name: "Kotlin" },
+      { name: "AI/ML" },
+      { name: "Firebase" }
+    ],
+    link: "/projects/nutritrack",
+  },
+  {
+    title: "Saarthi",
+    description: "A communication assistant for disabled individuals that converts sign language to text using AI.",
+    technologies: [
+      { name: "Python" },
+      { name: "TensorFlow" },
+      { name: "OpenCV" }
+    ],
+    link: "/projects/saarthi",
   },
 ];
 

@@ -21,7 +21,7 @@ const Footer: React.FC = () => {
   return (
     <footer className={`${footerTheme.background} py-10 ${footerTheme.textPrimary} text-center pt-96`}>
       <div className="container mx-auto px-4 flex flex-col items-center">
-        <h2 className="text-lg font-semibold">Let's Connect!</h2>
+        <h2 className="text-lg font-semibold">Let&apos;s Connect!</h2>
         <p className={`${footerTheme.textSecondary} mt-2 max-w-lg`}>{connect.msg1}</p>
 
         <div className="flex gap-6 mt-4">

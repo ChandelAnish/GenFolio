@@ -157,3 +157,23 @@ useTransform:
         
     🔥 Why?
     Tailwind compiles class names at build time, and before: must be part of the static class string. It cannot be injected dynamically.
+
+
+
+
+
+***** The issue is likely occurring because Next.js tries to pre-render the page at build time, but getPortfolioData is making a network request to http://localhost:3000/api, which won't be available during static generation (SSG).
+
+    Why the Error Happens:
+        -> getPortfolioData() is an async function fetching data from http://localhost:3000/api.
+        -> During the build process, Next.js tries to pre-render the page.
+        -> Since http://localhost:3000/api is a local API, it's unavailable during build time.
+        -> The build fails because it cannot fetch data, causing an "Error occurred prerendering page".
+
+    Why Removing getPortfolioData Fixes It:
+        -> When getPortfolioData() is removed, there's no external API call during pre-rendering.
+        -> The page is rendered without needing async data, so Next.js doesn't fail.
+
+    - Use fetch() or axios inside a server component only if the API is accessible at build time (e.g., an external API or a database).
+    - If the API is a Next.js route handler (app/api folder), it only runs in the runtime environment (not at build time).
+    - The request will fail during SSG (Static Site Generation) because Next.js tries to fetch the API before the server is running.

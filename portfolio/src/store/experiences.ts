@@ -1,66 +1,24 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import type { RootState } from "./store";
-import React from "react";
+// import type { RootState } from "./store";
+// import React from "react";
 import { Experience } from "@/types";
 
 // Define the initial state using that type
 const initialState: Experience[] = [
   {
     id: 1,
-    company: "Englience AI Labs",
-    role: "Full Stack Engineer (AI - Intern)",
-    duration: "Sep 2024 - Dec 2024",
+    company: "NoTime Startup",
+    role: "Full Stack Developer Intern",
+    duration: "Oct 2024 - Present",
     description:
-      "Working on AI-driven course generation and activity creation systems.",
+      "Building and enhancing the NoTime Ed-tech platform, focusing on authentication, AI-based learning solutions, and cloud deployment.",
     highlights: [
-      "Refactored codebase using SOLID principles",
-      "Integrated knowledge base for custom document uploads",
-      "Developed AI agent for generating 6 types of activities",
-      "Enhanced system scalability and integration",
+      "Implemented authentication using JWT",
+      "Developed interactive learning modules using Next.js and Tailwind CSS",
+      "Integrated AWS for scalable cloud solutions",
+      "Worked on Payload CMS for content management",
     ],
-  },
-  {
-    id: 2,
-    company: "Englience AI Labs",
-    role: "Full Stack Engineer (AI - Intern)",
-    duration: "Sep 2024 - Dec 2024",
-    description:
-      "Working on AI-driven course generation and activity creation systems.",
-    highlights: [
-      "Refactored codebase using SOLID principles",
-      "Integrated knowledge base for custom document uploads",
-      "Developed AI agent for generating 6 types of activities",
-      "Enhanced system scalability and integration",
-    ],
-  },
-  {
-    id: 3,
-    company: "Englience AI Labs",
-    role: "Full Stack Engineer (AI - Intern)",
-    duration: "Sep 2024 - Dec 2024",
-    description:
-      "Working on AI-driven course generation and activity creation systems.",
-    highlights: [
-      "Refactored codebase using SOLID principles",
-      "Integrated knowledge base for custom document uploads",
-      "Developed AI agent for generating 6 types of activities",
-      "Enhanced system scalability and integration",
-    ],
-  },
-  {
-    id: 4,
-    company: "Google Summer of Code",
-    role: "Full Stack Developer (Contributor)",
-    duration: "May 2024 - Nov 2024",
-    description:
-      "Contributing to open-source development focusing on file storage and security improvements.",
-    highlights: [
-      "Refactored codebase using SOLID principles",
-      "Integrated knowledge base for custom document uploads",
-      "Developed AI agent for generating 6 types of activities",
-      "Enhanced system scalability and integration",
-    ],
-  },
+  }
 ];
 
 export const experiencesSlice = createSlice({

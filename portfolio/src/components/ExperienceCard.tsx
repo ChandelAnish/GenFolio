@@ -2,7 +2,7 @@
 
 import { useAppSelector } from "@/store/hooks";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { LucideIcon, Circle } from "lucide-react";
+import { Circle } from "lucide-react";
 import React, { useRef } from "react";
 
 // const experienceCardTheme=  {
