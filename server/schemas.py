@@ -93,3 +93,4 @@ class PortfolioData(BaseModel):
     projects: List[Project]
     toolsAndTechnologies: List[ToolTechnology]
     connect: Connect
+

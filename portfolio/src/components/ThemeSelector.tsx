@@ -393,7 +393,7 @@ const ThemeSelector = () => {
       <button
         id="theme-toggle-button"
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-8 right-8 bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg z-50 transition-all duration-300"
+        className="bg-gray-800 hover:bg-gray-700 text-white p-3 rounded-full shadow-lg z-50 transition-all duration-300"
         aria-label="Toggle theme selector"
       >
         <PaintBucket size={24} className="transition-transform duration-300" />

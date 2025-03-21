@@ -23,7 +23,6 @@ export default function PortfolioWrapper() {
       <div 
         className={`w-full min-h-screen flex flex-col justify-center bg-gradient-to-t ${bodyTheme.backgroundGradientFrom} ${bodyTheme.backgroundGradientTo}`}
       >
-        <ThemeSelector/>
         <Hero />
         <Experiences />
         <Projects/>

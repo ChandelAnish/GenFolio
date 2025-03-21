@@ -9,13 +9,15 @@ import { fillToolsAndTechnologiesDetails } from "@/store/toolsAndTechnologies";
 import { PortfolioData } from "@/types";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import PromptButton from "./PromptButton";
+import ThemeSelector from "./ThemeSelector";
 
 export default function ActionDispatchWrapper({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const [data, setData] = useState<PortfolioData>();
+  const [portfolioData, setPortfolioData] = useState<PortfolioData>();
 
   useEffect(() => {
     const getPortfolioData = async () => {
@@ -26,7 +28,7 @@ export default function ActionDispatchWrapper({
       const { data }: { data: PortfolioData } = await axios.get(
         "http://localhost:3000/api"
       );
-      setData(data);
+      setPortfolioData(data);
     };
     getPortfolioData();
   }, []);
@@ -34,14 +36,53 @@ export default function ActionDispatchWrapper({
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (data) {
-      dispatch(fillIntroductionDetails(data.introduction));
-      dispatch(fillExperiencesDetails(data.experiences));
-      dispatch(fillProjectsDetails(data.projects));
-      dispatch(fillToolsAndTechnologiesDetails(data.toolsAndTechnologies));
-      dispatch(fillConnectDetails(data.connect));
+    if (portfolioData) {
+      dispatch(fillIntroductionDetails(portfolioData.introduction));
+      dispatch(fillExperiencesDetails(portfolioData.experiences));
+      dispatch(fillProjectsDetails(portfolioData.projects));
+      dispatch(fillToolsAndTechnologiesDetails(portfolioData.toolsAndTechnologies));
+      dispatch(fillConnectDetails(portfolioData.connect));
     }
-  }, [data]);
+  }, [portfolioData]);
 
-  return <>{children}</>;
+  const handlePromptSubmit = async (prompt: string) => {
+    // Send the prompt to your server
+    console.log("Sending prompt to server:", prompt);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/updatePortfolioData/updatePortfolioData",
+        {
+          username: portfolioData?.connect.mail,
+          prompt: prompt,
+          previousData: portfolioData,
+        }
+      );
+
+      setPortfolioData(response.data)
+      console.log("Response from server:", response.data);
+
+      // Handle the response as needed
+      return portfolioData;
+    } catch (error) {
+      console.error("Error sending prompt:", error);
+      throw error;
+    }
+  };
+
+  return (
+    <>
+      {children}
+      <div className="fixed bottom-8 right-8 flex flex-col items-center justify-center gap-3">
+
+      <PromptButton
+        handlePromptSubmit={handlePromptSubmit}
+        placeholder="Ask me anything..."
+        buttonText="Ask AI"
+      />
+        <ThemeSelector/>
+      </div>
+
+    </>
+  );
 }

@@ -20,8 +20,6 @@ google_llm = ChatGoogleGenerativeAI(
     # other params...
 )
 
-load_dotenv()
-
 llm = ChatGroq(
     model="mixtral-8x7b-32768",
     temperature=0,
@@ -50,7 +48,9 @@ async def portfolioDataGenerator(requestPortfolioData: RequestProfileData):
     query = f"""
 Generate a JSON response strictly following this Pydantic schema.
 
-Enhance the details provided by the user, correct the spelling mistakes and use strong verbs so that it is more impactful.
+1. Improve all descriptions with powerful language, strong action verbs, and professional tone.
+2. Fix any spelling or grammatical errors throughout.
+3. Maintain the exact JSON structure - do not add or remove any keys from objects
 
 Ensure that:
     - Each technology in 'toolsAndTechnologies' is an object with "name" and "icon" keys.The "icon" should be the corresponding react-icons component name for the given technology.

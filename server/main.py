@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends
 from sqlmodel import SQLModel, Session
 from .db import engine, get_session
 from typing import Annotated
-from .routers import portfolioData, users
+from .routers import portfolioData, users, updatePortfolioData
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -34,3 +34,6 @@ app.include_router(users.router)
 
 #including the portfolio router
 app.include_router(portfolioData.router)
+
+#including the update portfolio router
+app.include_router(updatePortfolioData.router)
