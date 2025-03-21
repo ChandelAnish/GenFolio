@@ -6,34 +6,38 @@ import TechStackCard from "./TechStackCard";
 import { ChevronDown } from "lucide-react";
 import { useAppSelector } from "@/store/hooks";
 
+// const toolsAndTechnologiesTheme = {
+//   sectionBg: "bg-[#0f0e1a]/60",
+//   headingGradient: "bg-gradient-to-br from-white to-cyan-500",
+//   headingText: "text-transparent",
+//   chevronColor: "text-gray-400",
+// };
 
-const SkillsAndTechnologies: React.FC = () => {
+const ToolsAndTechnologies: React.FC = () => {
   const [expanded, setExpanded] = useState(false);
 
-  const technologies = useAppSelector(store=>store.toolsAndTechnologies)
+  const skillsAndTechnologiesTheme = useAppSelector((store) => store.theme.toolsAndTechnologiesTheme);
+  const technologies = useAppSelector((store) => store.toolsAndTechnologies);
 
   return (
-    <section className="py-20 mt-9 bg-[#0f0e1a]/60">
+    <section className={`py-20 mt-9 ${skillsAndTechnologiesTheme.sectionBg}`}>
       <div className="container mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          // viewport={{once: true}}
-          className="text-4xl font-semibold text-center mb-16 bg-gradient-to-br from-white to-cyan-500 bg-clip-text text-transparent"
+          className={`text-4xl font-semibold text-center mb-16 ${skillsAndTechnologiesTheme.headingGradient} bg-clip-text ${skillsAndTechnologiesTheme.headingText}`}
         >
           My Tech Arsenal
         </motion.h2>
 
         {/* Display the first 10 technologies */}
-        <motion.div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center mb-12" layout>
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center mb-12"
+          layout
+        >
           {technologies.slice(0, 10).map((tech, index) => (
-            <TechStackCard
-              key={index}
-              name={tech.name}
-              icon={tech.icon}
-              index={index}
-            />
+            <TechStackCard key={index} name={tech.name} icon={tech.icon} index={index} />
           ))}
         </motion.div>
 
@@ -48,12 +52,7 @@ const SkillsAndTechnologies: React.FC = () => {
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-8 justify-items-center mt-6 overflow-hidden"
             >
               {technologies.slice(10).map((tech, index) => (
-                <TechStackCard
-                  key={index + 10}
-                  name={tech.name}
-                  icon={tech.icon}
-                  index={index + 10}
-                />
+                <TechStackCard key={index + 10} name={tech.name} icon={tech.icon} index={index + 10} />
               ))}
             </motion.div>
           )}
@@ -67,18 +66,9 @@ const SkillsAndTechnologies: React.FC = () => {
           transition={{ delay: 0.5 }}
           onClick={() => setExpanded(!expanded)}
         >
-          <motion.div
-            animate={{ y: [0, 5, 0] }}
-            transition={{ duration:1, repeat: Infinity }}
-          >
-            <motion.div
-              animate={{ rotate: expanded ? 180 : 0 }}
-              transition={{
-                duration: 1.5,
-                ease: "easeInOut",
-              }}
-            >
-              <ChevronDown className="text-gray-400" size={32} />
+          <motion.div animate={{ y: [0, 5, 0] }} transition={{ duration: 1, repeat: Infinity }}>
+            <motion.div animate={{ rotate: expanded ? 180 : 0 }} transition={{ duration: 1.5, ease: "easeInOut" }}>
+              <ChevronDown className={skillsAndTechnologiesTheme.chevronColor} size={32} />
             </motion.div>
           </motion.div>
         </motion.div>
@@ -87,4 +77,4 @@ const SkillsAndTechnologies: React.FC = () => {
   );
 };
 
-export default SkillsAndTechnologies;
+export default ToolsAndTechnologies;

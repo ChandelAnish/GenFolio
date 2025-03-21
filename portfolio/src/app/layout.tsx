@@ -10,9 +10,12 @@ export const metadata = {
 };
 
 const getPortfolioData = async () => {
+  // const response = await axios.get("http://localhost:4000/building-portfolio/api");
+  // const data = response.data;
+  // console.log(data.portfolio.introduction)
+  // return data.portfolio;
   const response = await axios.get("http://localhost:3000/api");
-  const data: PortfolioData = response.data;
-  return data;
+  return response.data
 };
 
 export default async function RootLayout({
@@ -25,7 +28,7 @@ export default async function RootLayout({
   return (
     <StoreProvider>
       <ActionDispatchWrapper data={data}>
-        <html lang="en">
+        <html lang="en" className="scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent overflow-y-scroll">
           <body>{children}</body>
         </html>
       </ActionDispatchWrapper>

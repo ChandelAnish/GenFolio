@@ -19,3 +19,10 @@ export async function POST(req: NextRequest){
     return NextResponse.json({userInput, aiResponse,newUser})
     // return NextResponse.json({newUser})
 }
+
+export async function GET(req: NextRequest){
+    await connectToDB()
+    const allUsers = await UserPortfolioData.find({})
+    return NextResponse.json(allUsers[0])
+    // return NextResponse.json({newUser})
+}

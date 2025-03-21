@@ -130,3 +130,30 @@ useTransform:
         - Next.js automatically maps HTTP methods (GET, POST, PUT, DELETE) to these named exports.
         - Without named exports, Next.js won’t know how to handle different HTTP methods in the route.ts file.
         - Dynamic API routing depends on these method-specific exports.
+
+
+***The utils folder contains general-purpose utility functions, while the lib folder contains more specialized libraries and helper functions.
+
+*** react component must be rendered as jsx/tsx element inside jsx/tsx file.
+
+
+
+
+
+***Tailwind does not support dynamically injecting before: inside a template string (e.g., before:${timelineDotOuterColor}).
+
+    ✅ Correct way:
+        Define the variable with before: included:
+
+        const timelineDotOuterColor = "before:bg-cyan-400"; 
+    Then use it directly:
+
+        <div className={`relative before:w-16 before:h-16 ${timelineDotOuterColor} before:opacity-40 before:rounded-full before:-z-10 before:animate-ping`} />
+
+    ❌ Wrong way (won’t work):
+        const timelineDotOuterColor = "bg-cyan-400"; // Missing "before:"
+
+        <div className={`before:${timelineDotOuterColor}`} />  // This fails
+        
+    🔥 Why?
+    Tailwind compiles class names at build time, and before: must be part of the static class string. It cannot be injected dynamically.

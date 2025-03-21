@@ -52,6 +52,10 @@ Generate a JSON response strictly following this Pydantic schema.
 
 Enhance the details provided by the user, correct the spelling mistakes and use strong verbs so that it is more impactful.
 
+Ensure that:
+    - Each technology in 'toolsAndTechnologies' is an object with "name" and "icon" keys.The "icon" should be the corresponding react-icons component name for the given technology.
+    - All fields must strictly follow the schema structure.
+
 Here is the input data:
 {requestPortfolioData}
 

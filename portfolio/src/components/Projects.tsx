@@ -5,16 +5,22 @@ import ProjectCard from "./ProjectCard";
 import { motion } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
 
+// project theme
+// const projectTheme = {
+//   headingGradient:
+//     "bg-gradient-to-br from-white to-cyan-500 bg-clip-text text-transparent",
+//   subtextColor: "text-gray-400",
+// };
 
 const Projects: React.FC = () => {
-
-  const projectsData = useAppSelector(store=>store.projects)
+  const projectTheme = useAppSelector((store) => store.theme.projectTheme);
+  const projectsData = useAppSelector((store) => store.projects);
 
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
         <motion.h2
-          className="text-4xl font-semibold text-center mb-4 bg-gradient-to-br from-white to-cyan-500 bg-clip-text text-transparent"
+          className={`text-4xl font-semibold text-center mb-4 ${projectTheme.headingGradient}`}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -23,7 +29,7 @@ const Projects: React.FC = () => {
           Spotlight Projects
         </motion.h2>
         <motion.p
-          className="text-gray-400 text-center mb-12"
+          className={`${projectTheme.subtextColor} text-center mb-12`}
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
