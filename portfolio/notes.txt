@@ -177,3 +177,17 @@ useTransform:
     - Use fetch() or axios inside a server component only if the API is accessible at build time (e.g., an external API or a database).
     - If the API is a Next.js route handler (app/api folder), it only runs in the runtime environment (not at build time).
     - The request will fail during SSG (Static Site Generation) because Next.js tries to fetch the API before the server is running.
+
+
+
+
+*** const newUser = await UserPortfolioData.findOne({ 
+    portfolio: { connect: { mail: "development.8427@gmail.com" } } 
+});
+
+    -> This query is returning null because it does not correctly match nested fields in MongoDB.
+    -> This will only match documents where the entire portfolio.connect object is exactly equal to { mail: "development.8427@gmail.com" }, ignoring other fields like msg1, github, etc.
+    -> Instead, use dot notation to query nested fields correctly:
+            const newUser = await UserPortfolioData.findOne({
+                "portfolio.connect.mail": "development.8427@gmail.com"
+            });

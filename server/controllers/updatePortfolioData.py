@@ -1,8 +1,8 @@
-from ..services.updatePortfolioSectionsAI import portfolioSectionDataGenerator
+from ..services.updatePortfolioSectionsAI import updatedPortfolioDataGenerator
 
 
 async def generateUpdatedPortfolioData(req, session):
-    updatedPortfolioData = await portfolioSectionDataGenerator(
+    updatedPortfolioData = await updatedPortfolioDataGenerator(
         previousData=req.previousData, userPrompt=req.prompt
     )
     return updatedPortfolioData

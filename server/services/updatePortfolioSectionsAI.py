@@ -25,7 +25,7 @@ llm = ChatGroq(
     max_retries=2,
 )
 
-async def portfolioSectionDataGenerator(previousData, userPrompt: str):
+async def updatedPortfolioDataGenerator(previousData, userPrompt: str):
         
     parser = JsonOutputParser(pydantic_object=PortfolioData)
 
@@ -47,6 +47,7 @@ For array modifications (the only structural changes allowed):
 - You MAY add or remove items from the highlights array within experiences
 - You MAY add or remove technologies within projects, following it's object structure. 
 - You MAY add technologies to toolsAndTechnologies but must include both "name" and "icon" (use valid react-icons component names)
+- You MAY add or remove text contents of the keys if told to increase/decrease/enhance/precise of the text content.
 - You MUST maintain the structure of all existing elements (keep all keys)
 
 Term translations for better understanding:

@@ -149,7 +149,7 @@ const Hero = () => {
               <div className="relative">
                 <div className={`absolute inset-0 ${heroTheme.accentBackground} rounded-full opacity-20 blur-xl transform scale-110`} />
                 <div className={`relative w-48 h-48 sm:w-96 sm:h-96 md:w-72 md:h-72 lg:w-96 lg:h-96 ${heroTheme.accentBackground} rounded-tl-full rounded-tr-full rounded-bl-full rounded-br-full overflow-hidden`}>
-                  <Image
+                  <img
                     src={introduction.profileImage}
                     alt="profile-picture"
                     className="w-full h-full object-cover"

@@ -1,5 +1,7 @@
 import StoreProvider from "@/store/StoreProvider";
 import "./globals.css";
+import { ClerkProvider } from "@clerk/nextjs";
+
 
 export const metadata = {
   title: "GenFolio",
@@ -12,14 +14,16 @@ export default async function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <StoreProvider>
-    <html lang="en">
-      <body>
-        <div className="w-full min-h-screen flex flex-col justify-center bg-gradient-to-t from-cyan-700/30 to-black">
-          {children}
-        </div>
-      </body>
-    </html>
-    </StoreProvider>
+    <ClerkProvider>
+      <html lang="en">
+        <body>
+          <StoreProvider>
+            <div className="w-full min-h-screen flex flex-col justify-center bg-gradient-to-t from-cyan-700/30 to-black">
+              {children}
+            </div>
+          </StoreProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

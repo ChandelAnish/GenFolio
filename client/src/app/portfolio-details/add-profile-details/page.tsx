@@ -20,6 +20,8 @@ import {
   fillInitialProfileDetails,
   fillprofileDetails,
 } from "@/store/portfolioDetailsSlice";
+import { useUser } from "@clerk/nextjs";
+
 interface GitHubValidationStatus {
   status: "checking" | "valid" | "invalid" | "idle";
   avatarUrl: string | null;
@@ -46,6 +48,16 @@ const ProfileComponent: React.FC = () => {
     });
 
   const debouncedGithubUsername = useDebounce(profileData.githubUsername, 500);
+  const {user} = useUser()
+  
+  useEffect(() => {
+    if (user?.primaryEmailAddress?.emailAddress) {
+      setProfileData((prev) => ({
+        ...prev,
+        email: user?.primaryEmailAddress?.emailAddress || "", 
+      }));
+    }
+  }, [user]);
 
   useEffect(() => {
     // load profile data details from session storage
@@ -242,7 +254,6 @@ const ProfileComponent: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-white border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
-                    placeholder="John Doe"
                   />
                 </div>
 
@@ -257,7 +268,6 @@ const ProfileComponent: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-white border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
-                    placeholder="Senior Developer"
                   />
                 </div>
 
@@ -277,7 +287,6 @@ const ProfileComponent: React.FC = () => {
                         onChange={handleInputChange}
                         required
                         className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-white border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
-                        placeholder="johndoe"
                       />
                       {profileData.githubUsername && (
                         <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
@@ -301,7 +310,6 @@ const ProfileComponent: React.FC = () => {
                       onChange={handleInputChange}
                       required
                       className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-white border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
-                      placeholder="johndoe"
                     />
                   </div>
                 </div>
@@ -317,10 +325,10 @@ const ProfileComponent: React.FC = () => {
                     type="email"
                     name="email"
                     value={profileData.email}
-                    onChange={handleInputChange}
+                    // onChange={handleInputChange}
+                    readOnly
                     required
-                    className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-white border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
-                    placeholder="john.doe@example.com"
+                    className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-gray-500 border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
                   />
                 </div>
 
@@ -337,7 +345,6 @@ const ProfileComponent: React.FC = () => {
                     onChange={handleInputChange}
                     required
                     className="w-full px-4 py-2 rounded-lg bg-gray-600/20 text-sm text-white border-[1px] border-gray-700 focus:border-cyan-500/50 focus:outline-none"
-                    placeholder="Tell us about yourself..."
                   />
                 </div>
 

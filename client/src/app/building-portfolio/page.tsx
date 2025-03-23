@@ -5,10 +5,12 @@ import { motion } from "framer-motion";
 import { GiArtificialHive } from "react-icons/gi";
 import axios from "axios";
 import { useAppSelector } from "@/hooks/customHooks";
+import { useRouter } from "next/navigation";
 
 const LoadingComponent = () => {
   const [loading, setLoading] = useState(true);
   const portfolioDetails = useAppSelector((store) => store.portfolioDetails);
+  const router= useRouter() 
 
   useEffect(() => {
     const data = portfolioDetails.profileData.name
@@ -23,6 +25,7 @@ const LoadingComponent = () => {
           data
         );
         console.log(response.data);
+        router.push('/dashboard')
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -53,9 +56,7 @@ const LoadingComponent = () => {
             Building your portfolio...
           </motion.div>
         </div>
-      ) : (
-        <p className="text-xl font-bold text-green-400">Loaded successfully!</p>
-      )}
+      ) : (null)}
     </div>
   );
 };

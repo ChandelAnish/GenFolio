@@ -4,11 +4,11 @@ import { Connect } from "@/types";
 
 // Define the initial state using that type
 const initialState: Connect = {
-  msg1: "Available for freelance work, innovative projects, and internship opportunities. Let's create something groundbreaking together!",
-  github: "https://github.com/ChandelAnish",
-  linkedin: "https://www.linkedin.com/in/as-chandel",
-  mail: "anish8427singh@gmail.com",
-  msg2: "Let's collaborate and build the future!",
+  msg1: "",
+  github: "",
+  linkedin: "",
+  mail: "",
+  msg2: "",
 };
 
 export const connectSlice = createSlice({

@@ -7,16 +7,13 @@ import { Experience } from "@/types";
 const initialState: Experience[] = [
   {
     id: 1,
-    company: "NoTime Startup",
-    role: "Full Stack Developer Intern",
-    duration: "Oct 2024 - Present",
+    company: "",
+    role: "",
+    duration: "",
     description:
-      "Building and enhancing the NoTime Ed-tech platform, focusing on authentication, AI-based learning solutions, and cloud deployment.",
+      "",
     highlights: [
-      "Implemented authentication using JWT",
-      "Developed interactive learning modules using Next.js and Tailwind CSS",
-      "Integrated AWS for scalable cloud solutions",
-      "Worked on Payload CMS for content management",
+      "",
     ],
   }
 ];

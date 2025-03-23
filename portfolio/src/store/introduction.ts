@@ -4,11 +4,11 @@ import { Introduction } from '@/types'
 
 // Define the initial state using that type
 const initialState: Introduction = {
-  name: "Anish Singh Chandel",
-  designation: "Full-Stack Developer | AI Enthusiast",
+  name: "",
+  designation: "",
   about:
-    "Versatile full-stack developer proficient in frontend, backend, databases, and AI-driven solutions. Passionate about building scalable applications and innovative tech solutions.",
-  profileImage: "/anishIMG.jpg",
+    "",
+  profileImage: "/defaultUserImage.png",
 }
 
 export const introductionSlice = createSlice({

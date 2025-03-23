@@ -14,8 +14,8 @@ interface PromptButtonProps {
 
 const PromptButton: React.FC<PromptButtonProps> = ({
   handlePromptSubmit,
-  buttonText = "Prompt",
-  placeholder = "Enter your prompt here...",
+  buttonText = "Ask AI",
+  placeholder = "Ask me anything....",
 }) => {
   const buttonTheme = useAppSelector(
     (store) => store.theme.heroTheme.accentBackground
@@ -147,7 +147,7 @@ const PromptButton: React.FC<PromptButtonProps> = ({
                     Sending...
                   </span>
                 ) : (
-                  "Send"
+                  buttonText
                 )}
               </button>
             </div>
