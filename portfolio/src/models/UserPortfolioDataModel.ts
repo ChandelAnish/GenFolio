@@ -1,4 +1,4 @@
-import mongoose, { Schema, model, models } from "mongoose";
+import { Schema, model, models } from "mongoose";
 import { UserInputSchema } from "./userInputSchema";
 import { PortfolioSchema } from "./portfolioSchema";
 

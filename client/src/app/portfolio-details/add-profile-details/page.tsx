@@ -15,7 +15,7 @@ import axios from "axios";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter } from "next/navigation";
 import { ProfileData } from "@/types";
-import { useAppDispatch, useAppSelector } from "@/hooks/customHooks";
+import { useAppDispatch } from "@/hooks/customHooks";
 import {
   fillInitialProfileDetails,
   fillprofileDetails,
@@ -102,6 +102,7 @@ const ProfileComponent: React.FC = () => {
           }));
         }
       } catch (error) {
+        console.log(error)
         setGithubValidation({ status: "invalid", avatarUrl: null });
       }
     };
@@ -180,7 +181,7 @@ const ProfileComponent: React.FC = () => {
       setLoading(false);
       router.push("/portfolio-details/add-experience");
     } catch (error) {
-      console.error("Image upload failed");
+      console.error("Image upload failed : ", error);
       setLoading(false);
     }
   };

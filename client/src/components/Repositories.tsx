@@ -22,9 +22,11 @@ const Repositories: React.FC<RepositoriesProps> = ({
       try {
         setLoading(true);
         const response = await axios.get(`https://api.github.com/users/${username}/repos`);
+        const data: Repository[] = response.data
         setRepos(response.data);
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
+        console.log(error)
         setError('Failed to load repositories');
         setLoading(false);
       }

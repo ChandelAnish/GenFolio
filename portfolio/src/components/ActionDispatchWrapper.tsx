@@ -18,7 +18,7 @@ export default function ActionDispatchWrapper({
 }: {
   children: React.ReactNode;
 }) {
-  const [loading, setLoading] = useState<Boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [portfolioData, setPortfolioData] = useState<PortfolioData>();
 
   useEffect(() => {
@@ -69,7 +69,7 @@ export default function ActionDispatchWrapper({
         });
         console.log(dbResponse.data);
       } catch (error) {
-        console.error("error saving to database");
+        console.error("error saving to database : ", error);
       }
     } catch (error) {
       console.error("Error sending prompt:", error);

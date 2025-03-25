@@ -238,7 +238,7 @@ const SkillsSelector: React.FC = () => {
                   <div className="px-4 py-2 text-sm text-gray-400">
                     {categoryNames[category].toUpperCase()}
                   </div>
-                  {skills.map((skill, index) => {
+                  {skills.map((skill) => {
                     const flatIndex = Object.values(groupedSkills)
                       .flat()
                       .indexOf(skill);
@@ -261,7 +261,7 @@ const SkillsSelector: React.FC = () => {
               ))
             ) : (
               <div className="px-4 py-3 text-sm text-gray-400">
-                No matching skills found. Press Enter to add "{searchTerm}" as a
+                No matching skills found. Press Enter to add &quot;{searchTerm}&quot; as a
                 custom skill.
               </div>
             )}

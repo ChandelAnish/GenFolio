@@ -18,19 +18,17 @@ export interface Repository {
   name: string;
   description: string | null;
   html_url: string;
-  stargazers_count: number;
   topics: string[] | [];
-  updated_at: string;
-  fork: boolean;
 }
 
 export interface Project {
-  id: number
+  id: number;
   title: string;
   description: string | null;
-  technologies: string[] | [];
   link: string;
+  technologies: string[] | [];
 }
+
 export interface ProfileData {
   name: string;
   githubUsername: string;

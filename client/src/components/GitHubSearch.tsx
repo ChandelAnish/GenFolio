@@ -32,7 +32,17 @@ export default function GitHubSearch() {
       // console.log(sessionProfileData);
       dispatch(fillInitialProfileDetails(sessionProfileData));
       setSelectedUser(sessionStorage.getItem("selectedGithubUser"))
-      setSelectedRepos(sessionProfileData.projects)
+      const projects: Project[] = sessionProfileData.projects;
+      // console.log(projects)
+      const selectedReposArray: Repository[] = projects.map((item)=>({
+        id: item.id,
+        name: item.title,
+        description: item.description,
+        html_url: item.link,
+        topics: item.technologies,
+      }))
+
+      setSelectedRepos(selectedReposArray)
     }
   },[]);
 
@@ -50,7 +60,8 @@ export default function GitHubSearch() {
         const response = await axios.get(`https://api.github.com/search/users?q=${searchQuery}`);
         setUsers(response.data.items);
         setLoading(false);
-      } catch (err) {
+      } catch (error) {
+        console.log(error)
         setError('Error searching for users');
         setLoading(false);
       }
@@ -71,6 +82,8 @@ export default function GitHubSearch() {
 
   const handleRepoToggle = (repo: Repository, isSelected: boolean) => {
     if (isSelected) {
+      // console.log(repo)
+      // console.log(selectedRepos)
       setSelectedRepos(prev => [...prev, repo]);
     } else {
       setSelectedRepos(prev => prev.filter(r => r.id !== repo.id));
@@ -87,6 +100,7 @@ export default function GitHubSearch() {
     }));
     sessionStorage.setItem("selectedGithubUser",selectedUser ?? '')
     dispatch(fillProjects(selectedReposInfo))
+    // console.log(selectedRepos);
     // console.log(selectedReposInfo);
     router.push('/portfolio-details/add-skills')
   };

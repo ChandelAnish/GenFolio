@@ -8,7 +8,7 @@ import ExperienceCard from "./ExperienceCard";
 import ExperienceForm from "./ExperienceForm";
 import { useRouter } from "next/navigation";
 import { Experience } from "@/types";
-import { useAppDispatch, useAppSelector } from "@/hooks/customHooks";
+import { useAppDispatch } from "@/hooks/customHooks";
 import {
   fillExperiences,
   fillInitialProfileDetails,

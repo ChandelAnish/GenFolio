@@ -4,7 +4,6 @@ import React, { useRef } from "react";
 import { Github, Linkedin, Mail, Eye } from "lucide-react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useAppSelector } from "@/store/hooks";
-import Image from "next/image";
 
 // const heroTheme= {
 //   sectionBackground: "bg-gray-800",

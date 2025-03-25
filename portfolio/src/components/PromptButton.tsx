@@ -4,7 +4,7 @@ import React, { useState, useRef, useEffect } from "react";
 // Import AI icon from react-icons
 import { GiArtificialHive } from "react-icons/gi";
 import { motion } from "framer-motion";
-import { useAppSelector } from "@/store/hooks";
+// import { useAppSelector } from "@/store/hooks";
 
 interface PromptButtonProps {
   handlePromptSubmit: (prompt: string) => void;
@@ -17,9 +17,9 @@ const PromptButton: React.FC<PromptButtonProps> = ({
   buttonText = "Ask AI",
   placeholder = "Ask me anything....",
 }) => {
-  const buttonTheme = useAppSelector(
-    (store) => store.theme.heroTheme.accentBackground
-  );
+  // const buttonTheme = useAppSelector(
+  //   (store) => store.theme.heroTheme.accentBackground
+  // );
 
   const [isOpen, setIsOpen] = useState(false);
   const [prompt, setPrompt] = useState("");

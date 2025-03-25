@@ -45,7 +45,7 @@ export default function Hero() {
           transition={{ duration: 1, ease: "easeInOut", delay: 0.3 }}
         >
           Effortlessly build, customize, and showcase your portfolio using AI.
-          🚀 Let's create!
+          🚀 Let&apos;s create!
         </motion.p>
 
         {/* Build Portfolio button */}

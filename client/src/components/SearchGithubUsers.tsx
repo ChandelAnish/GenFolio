@@ -71,7 +71,7 @@ const SearchGithubUsers: React.FC<SearchGithubUsersProps> = ({
             ) : (
               searchQuery && (
                 <div className="text-center py-6 text-gray-500">
-                  No users found matching "{searchQuery}"
+                  No users found matching &quot;{searchQuery}&quot;
                 </div>
               )
             )}

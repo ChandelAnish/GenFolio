@@ -113,7 +113,7 @@ export default function ExperienceForm({
 
             <div className="mb-3">
               <label className="font-semibold block text-sm text-gray-300 mb-1">
-                Duration (e.g., "Sep 2024 - Dec 2024")
+                Duration (e.g., &quot;Sep 2024 - Dec 2024&quot;)
               </label>
               <input
                 type="text"

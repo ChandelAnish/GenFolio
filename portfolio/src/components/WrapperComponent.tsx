@@ -1,7 +1,7 @@
 "use client"
 
 import { useAppSelector } from "@/store/hooks";
-import ThemeSelector from "./ThemeSelector";
+// import ThemeSelector from "./ThemeSelector";
 import Hero from "./Hero";
 import Experiences from "./Experiences";
 import Projects from "./Projects";

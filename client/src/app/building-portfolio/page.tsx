@@ -16,10 +16,10 @@ const LoadingComponent = () => {
     const data = portfolioDetails.profileData.name
       ? portfolioDetails
       : JSON.parse(sessionStorage.getItem("portfolioDetails") ?? "{}");
+      console.log(data);
     const fetchData = async () => {
       setLoading(true);
       try {
-        console.log(data);
         const response = await axios.post(
           "http://localhost:4000/building-portfolio/api",
           data
@@ -34,7 +34,7 @@ const LoadingComponent = () => {
     };
 
     fetchData();
-  }, []);
+  }, [portfolioDetails]);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-transparent text-white">
