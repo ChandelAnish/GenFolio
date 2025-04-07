@@ -34,7 +34,7 @@
     Create, customize, and deploy beautiful portfolios in minutes
   </p>
   
-  ![GenFolio Banner](https://raw.githubusercontent.com/ChandelAnish/GenFolio/main/public/genfolio-banner.png)
+![Banner](https://drive.google.com/uc?id=1dKcfR3oMvPjb5Cg-jAGrjWhsDd6d7PAl)
 </div>
 
 ## 🚀 Features
