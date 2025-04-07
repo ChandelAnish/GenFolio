@@ -35,6 +35,10 @@
   </p>
   
 ![Banner](https://drive.google.com/uc?id=1dKcfR3oMvPjb5Cg-jAGrjWhsDd6d7PAl)
+
+![Banner](https://drive.google.com/uc?id=1FwCK0nVHO14iHjKIeonQVjkQtBI1S5AT)
+
+![Banner](https://drive.google.com/uc?id=18ehBRvLLC4aD2zdvFkEzWMGL87Dx3uEn)
 </div>
 
 ## 🚀 Features
