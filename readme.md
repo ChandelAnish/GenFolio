@@ -100,9 +100,9 @@ const config = {
   bio: 'Passionate about creating beautiful web experiences',
   skills: ['JavaScript', 'React', 'Node.js', 'CSS', 'HTML'],
   social: {
-    github: 'https://github.com/yourusername',
-    linkedin: 'https://linkedin.com/in/yourusername',
-    twitter: 'https://twitter.com/yourusername',
+    github: 'https://github.com/ChandelAnish',
+    linkedin: 'https://linkedin.com/in/as-chandel',
+    twitter: 'https://twitter.com/anishsinghchan7',
   }
 };
 
