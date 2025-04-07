@@ -59,7 +59,6 @@ Built with best practices for search engine optimization to help your portfolio 
 
 ## ✨ Preview
 
-<div align="center">
 ![Preview Image](https://drive.google.com/uc?id=1FwCK0nVHO14iHjKIeonQVjkQtBI1S5AT)
 
 ![Preview Image](https://drive.google.com/uc?id=18ehBRvLLC4aD2zdvFkEzWMGL87Dx3uEn)
@@ -67,7 +66,6 @@ Built with best practices for search engine optimization to help your portfolio 
 ![Preview Image](https://drive.google.com/uc?id=1k9Bf7P97rgxiZhcE4jLV2IxKFQqxM57E)
 
 ![Preview Image](https://drive.google.com/uc?id=1JGBpX-YWwbvFTjwBMsdni6vw5Jun3Env)
-</div>
 
 ## 📦 Installation
 
