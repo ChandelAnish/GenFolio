@@ -35,10 +35,6 @@
   </p>
   
 ![Banner](https://drive.google.com/uc?id=1dKcfR3oMvPjb5Cg-jAGrjWhsDd6d7PAl)
-
-![Banner](https://drive.google.com/uc?id=1FwCK0nVHO14iHjKIeonQVjkQtBI1S5AT)
-
-![Banner](https://drive.google.com/uc?id=18ehBRvLLC4aD2zdvFkEzWMGL87Dx3uEn)
 </div>
 
 ## 🚀 Features
@@ -61,12 +57,16 @@ Your portfolio will look great on devices of all sizes, from desktop computers t
 ### ✅ SEO Optimized
 Built with best practices for search engine optimization to help your portfolio get discovered.
 
-## ✨ Demo
-
-Visit our [live demo](https://chandelanish.github.io/GenFolio/) to see GenFolio in action!
+## ✨ Preview
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/ChandelAnish/GenFolio/main/public/genfolio-screenshot.png" alt="GenFolio Dashboard" width="80%" />
+![Preview Image](https://drive.google.com/uc?id=1FwCK0nVHO14iHjKIeonQVjkQtBI1S5AT)
+
+![Preview Image](https://drive.google.com/uc?id=18ehBRvLLC4aD2zdvFkEzWMGL87Dx3uEn)
+
+![Preview Image](https://drive.google.com/uc?id=1k9Bf7P97rgxiZhcE4jLV2IxKFQqxM57E)
+
+![Preview Image](https://drive.google.com/uc?id=1JGBpX-YWwbvFTjwBMsdni6vw5Jun3Env)
 </div>
 
 ## 📦 Installation
