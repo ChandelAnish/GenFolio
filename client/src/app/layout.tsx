@@ -6,6 +6,9 @@ import { ClerkProvider } from "@clerk/nextjs";
 export const metadata = {
   title: "GenFolio",
   description: "Portfolio generating website",
+  icons:{
+    icon: "/favicon.png"
+  }
 };
 
 export default async function RootLayout({

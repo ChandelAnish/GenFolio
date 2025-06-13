@@ -191,3 +191,19 @@ useTransform:
             const newUser = await UserPortfolioData.findOne({
                 "portfolio.connect.mail": "development.8427@gmail.com"
             });
+
+------------
+import { NextRequest, NextResponse } from 'next/server';
+
+export async function GET(
+  req: NextRequest,
+  { params }: { params: { email: string } }
+) {
+  const encodedEmail = params.email;
+  const decodedEmail = decodeURIComponent(encodedEmail); // handle %40, etc.
+
+  return NextResponse.json({ email: decodedEmail });
+}
+params is passed separately from req as the second argument.
+
+You should use decodeURIComponent() to safely decode values like emails.

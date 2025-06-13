@@ -27,6 +27,7 @@ export default function Experiences() {
 
   return (
     <div
+      id="experience"
       ref={timelineRef}
       className="relative flex flex-col items-center min-h-screen px-6 py-16"
     >

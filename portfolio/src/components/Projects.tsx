@@ -17,7 +17,7 @@ const Projects: React.FC = () => {
   const projectsData = useAppSelector((store) => store.projects);
 
   return (
-    <section className="py-20">
+    <section className="py-20" id="projects">
       <div className="container mx-auto px-4">
         <motion.h2
           className={`text-4xl font-semibold text-center mb-4 ${projectTheme.headingGradient}`}

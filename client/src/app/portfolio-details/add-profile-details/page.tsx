@@ -162,7 +162,7 @@ const ProfileComponent: React.FC = () => {
       if (profileData.profileImage) {
         const { data } = await axios.post(
           "http://localhost:4000/portfolio-details/add-profile-details/api",
-          { profileImage: profileData.profileImage, name: profileData.email }
+          { profileImage: profileData.profileImage, username: profileData.email }
         );
         setProfileData((prev) => ({
           ...prev,

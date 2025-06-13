@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { motion } from "framer-motion";
 import { GiArtificialHive } from "react-icons/gi";
 import axios from "axios";
@@ -10,22 +10,31 @@ import { useRouter } from "next/navigation";
 const LoadingComponent = () => {
   const [loading, setLoading] = useState(true);
   const portfolioDetails = useAppSelector((store) => store.portfolioDetails);
-  const router= useRouter() 
+  const router = useRouter();
+  const hasCalledApi = useRef(false);
 
   useEffect(() => {
+    // Prevent double execution in Strict Mode
+    if (hasCalledApi.current) return;
+
     const data = portfolioDetails.profileData.name
       ? portfolioDetails
       : JSON.parse(sessionStorage.getItem("portfolioDetails") ?? "{}");
-      console.log(data);
+
+    console.log(data);
+
     const fetchData = async () => {
       setLoading(true);
+      hasCalledApi.current = true;
+
       try {
+        console.log("hello client");
         const response = await axios.post(
           "http://localhost:4000/building-portfolio/api",
           data
         );
         console.log(response.data);
-        router.push('/dashboard')
+        router.push("/dashboard");
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -33,8 +42,10 @@ const LoadingComponent = () => {
       }
     };
 
-    fetchData();
-  }, [portfolioDetails]);
+    if (data && Object.keys(data).length > 0) {
+      fetchData();
+    }
+  }, []); // Empty dependency array
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-transparent text-white">
@@ -56,7 +67,7 @@ const LoadingComponent = () => {
             Building your portfolio...
           </motion.div>
         </div>
-      ) : (null)}
+      ) : null}
     </div>
   );
 };

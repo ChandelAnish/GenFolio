@@ -3,6 +3,8 @@ export interface Introduction {
   designation: string;
   about: string;
   profileImage: string;
+  resume?:string,
+  visitorCount?:number;
 }
 
 export interface Experience {

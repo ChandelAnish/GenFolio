@@ -22,7 +22,7 @@ export default async function RootLayout({
     >
       <body>
         <StoreProvider>
-          <ActionDispatchWrapper>{children}</ActionDispatchWrapper>
+          {children}
         </StoreProvider>
       </body>
     </html>

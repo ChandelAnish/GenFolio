@@ -37,8 +37,19 @@ const Hero = () => {
 
   const opacity = useTransform(scrollYProgress, [0, 1], [1, 0]);
 
+  // Scroll to section function
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  };
+
   return (
-    <div className="w-full min-h-screen flex justify-center p-4">
+    <div id="home" className="w-full min-h-screen flex justify-center p-4">
       <motion.div
         ref={heroSection}
         style={{ opacity: opacity }}
@@ -53,33 +64,36 @@ const Hero = () => {
               Portfolio.
             </div>
             <div className="flex flex-wrap justify-center gap-3 sm:gap-4 md:gap-6">
-              <a href="#" className={`${heroTheme.accentColor} text-sm md:text-base`}>
+              <button
+                onClick={() => scrollToSection('home')}
+                className={`${heroTheme.accentColor} text-sm md:text-base cursor-pointer transition-colors`}
+              >
                 Home
-              </a>
-              <a
-                href="#"
-                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base`}
+              </button>
+              <button
+                onClick={() => scrollToSection('experience')}
+                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base cursor-pointer transition-colors`}
               >
                 Experience
-              </a>
-              <a
-                href="#"
-                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base`}
+              </button>
+              <button
+                onClick={() => scrollToSection('projects')}
+                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base cursor-pointer transition-colors`}
               >
                 Projects
-              </a>
-              <a
-                href="#"
-                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base`}
+              </button>
+              <button
+                onClick={() => scrollToSection('skills')}
+                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base cursor-pointer transition-colors`}
               >
                 Skills
-              </a>
-              <a
-                href="#"
-                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base`}
+              </button>
+              <button
+                onClick={() => scrollToSection('contact')}
+                className={`${heroTheme.navLink} ${heroTheme.accentTextHover} text-sm md:text-base cursor-pointer transition-colors`}
               >
                 Contact
-              </a>
+              </button>
             </div>
           </nav>
 
@@ -127,14 +141,14 @@ const Hero = () => {
                 >
                   <Mail size={16} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />
                 </a>
-                <p
-                  className={`w-8 h-8 rounded-full ${heroTheme.iconBackground} flex items-center justify-center ${heroTheme.accentColor} ${heroTheme.accentHover} ${heroTheme.hoverButtonText} transition-colors`}
+                <div
+                  className={`flex items-center gap-1 px-2 py-1 rounded-full ${heroTheme.iconBackground} ${heroTheme.accentColor} ${heroTheme.accentHover} ${heroTheme.hoverButtonText} transition-colors`}
                 >
-                  <Eye
-                    size={16}
-                    className="sm:w-4 sm:h-4 md:w-5 md:h-5"
-                  />
-                </p>
+                  <Eye size={16} className="sm:w-4 sm:h-4 md:w-5 md:h-5" />
+                  <span className="text-sm font-medium">
+                    {introduction.visitorCount}
+                  </span>
+                </div>
               </div>
 
               {/* CTA Button */}

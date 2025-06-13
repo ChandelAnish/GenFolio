@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest){
     // user input data
     const userInput = await req.json()
-    console.log(userInput)
+    console.log("hello")
 
     // ai generated data
     const response = await axios.post("http://localhost:8000/portfolioData",userInput)

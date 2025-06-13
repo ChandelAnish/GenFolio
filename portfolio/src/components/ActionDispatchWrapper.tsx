@@ -12,31 +12,53 @@ import React, { useEffect, useState } from "react";
 import PromptButton from "./PromptButton";
 import ThemeSelector from "./ThemeSelector";
 import LoadingSpinner from "./LoadingSpinner";
+import useVisitorCount from "@/hooks/useVisitorCount";
+import ErrorComponent from "./ErrorComponent";
 
 export default function ActionDispatchWrapper({
   children,
+  username,
 }: {
   children: React.ReactNode;
+  username: string;
 }) {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [portfolioData, setPortfolioData] = useState<PortfolioData>();
 
   useEffect(() => {
     const getPortfolioData = async () => {
-      setLoading(true);
-      const { data }: { data: PortfolioData } = await axios.get(
-        "http://localhost:3000/api"
-      );
-      setPortfolioData(data);
-      setLoading(false);
+      try {
+        setLoading(true);
+        const { data }: { data: PortfolioData | { error: string } } =
+          await axios.get(`http://localhost:3000/api/${username}`);
+
+        if ("error" in data) {
+          setError(data.error);
+          console.error("API Error:", data.error);
+        } else {
+          setPortfolioData(data);
+        }
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+          console.error("Request failed:", err.message);
+        } else {
+          setError("Something went wrong");
+          console.error("Unknown error:", err);
+        }
+      } finally {
+        setLoading(false);
+      }
     };
+
     getPortfolioData();
   }, []);
 
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    if (portfolioData) {
+    if (portfolioData && Object.keys(portfolioData).length != 0) {
       dispatch(fillIntroductionDetails(portfolioData.introduction));
       dispatch(fillExperiencesDetails(portfolioData.experiences));
       dispatch(fillProjectsDetails(portfolioData.projects));
@@ -44,8 +66,11 @@ export default function ActionDispatchWrapper({
         fillToolsAndTechnologiesDetails(portfolioData.toolsAndTechnologies)
       );
       dispatch(fillConnectDetails(portfolioData.connect));
+      setLoading(false);
     }
   }, [portfolioData]);
+
+  useVisitorCount(portfolioData, username);
 
   const handlePromptSubmit = async (prompt: string) => {
     // Send the prompt to your server
@@ -53,7 +78,7 @@ export default function ActionDispatchWrapper({
 
     try {
       const aiResponse = await axios.post(
-        "http://localhost:8000/updatePortfolioData/updatePortfolioData",
+        `http://localhost:8000/updatePortfolioData/updatePortfolioData`,
         {
           username: portfolioData?.connect.mail,
           prompt: prompt,
@@ -64,9 +89,12 @@ export default function ActionDispatchWrapper({
       setPortfolioData(newPortfolioData);
       console.log("Response from ai server:", aiResponse.data);
       try {
-        const dbResponse = await axios.patch("http://localhost:3000/api", {
-          newPortfolioData,
-        });
+        const dbResponse = await axios.patch(
+          `http://localhost:3000/api/${username}`,
+          {
+            newPortfolioData,
+          }
+        );
         console.log(dbResponse.data);
       } catch (error) {
         console.error("error saving to database : ", error);
@@ -81,6 +109,8 @@ export default function ActionDispatchWrapper({
     <>
       {loading ? (
         <LoadingSpinner />
+      ) : error ? (
+        <ErrorComponent message={error} variant="fullscreen" />
       ) : (
         <>
           {children}

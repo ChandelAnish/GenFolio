@@ -6,22 +6,22 @@ from langchain_core.prompts import PromptTemplate
 from typing import List
 import json
 from ..schemas import PortfolioData, RequestProfileData
-from langchain_google_genai import ChatGoogleGenerativeAI
+# from langchain_google_genai import ChatGoogleGenerativeAI
 
 
 load_dotenv()
 
-google_llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro",
-    temperature=0,
-    max_tokens=None,
-    timeout=None,
-    max_retries=2,
-    # other params...
-)
+# google_llm = ChatGoogleGenerativeAI(
+#     model="gemini-1.5-pro",
+#     temperature=0,
+#     max_tokens=None,
+#     timeout=None,
+#     max_retries=2,
+#     # other params...
+# )
 
 llm = ChatGroq(
-    model="mixtral-8x7b-32768",
+    model="llama-3.3-70b-versatile",
     temperature=0,
     max_tokens=None,
     timeout=None,
@@ -41,7 +41,7 @@ prompt = PromptTemplate(
 )
 
 
-chain = prompt | google_llm | parser
+chain = prompt | llm | parser
 
 
 async def portfolioDataGenerator(requestPortfolioData: RequestProfileData):

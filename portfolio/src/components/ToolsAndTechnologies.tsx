@@ -20,7 +20,7 @@ const ToolsAndTechnologies: React.FC = () => {
   const technologies = useAppSelector((store) => store.toolsAndTechnologies);
 
   return (
-    <section className={`py-20 mt-9 ${skillsAndTechnologiesTheme.sectionBg}`}>
+    <section className={`py-20 mt-9 ${skillsAndTechnologiesTheme.sectionBg}`} id="skills">
       <div className="container mx-auto px-4">
         <motion.h2
           initial={{ opacity: 0, y: 20 }}

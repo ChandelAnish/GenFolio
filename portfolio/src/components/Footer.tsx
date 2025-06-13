@@ -19,7 +19,7 @@ const Footer: React.FC = () => {
   const connect = useAppSelector((store) => store.connect);
 
   return (
-    <footer className={`${footerTheme.background} py-10 ${footerTheme.textPrimary} text-center pt-96`}>
+    <footer className={`${footerTheme.background} py-10 ${footerTheme.textPrimary} text-center pt-96`} id="contact">
       <div className="container mx-auto px-4 flex flex-col items-center">
         <h2 className="text-lg font-semibold">Let&apos;s Connect!</h2>
         <p className={`${footerTheme.textSecondary} mt-2 max-w-lg`}>{connect.msg1}</p>
