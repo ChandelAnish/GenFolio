@@ -10,10 +10,12 @@ import { PortfolioData } from "@/types";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import PromptButton from "./PromptButton";
-import ThemeSelector from "./ThemeSelector";
+import ThemeSelector, { themes } from "./ThemeSelector";
 import LoadingSpinner from "./LoadingSpinner";
 import useVisitorCount from "@/hooks/useVisitorCount";
 import ErrorComponent from "./ErrorComponent";
+import { usePathname } from "next/navigation";
+import { setTheme } from "@/store/theme";
 
 export default function ActionDispatchWrapper({
   children,
@@ -25,19 +27,25 @@ export default function ActionDispatchWrapper({
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [portfolioData, setPortfolioData] = useState<PortfolioData>();
+  const pathName = usePathname();
 
   useEffect(() => {
     const getPortfolioData = async () => {
       try {
+        console.log("fetching data");
         setLoading(true);
-        const { data }: { data: PortfolioData | { error: string } } =
+        const { data }: { data: {username: string, preferences:{theme: string} ,portfolio: PortfolioData} | { error: string } } =
           await axios.get(`http://localhost:3000/api/${username}`);
 
         if ("error" in data) {
           setError(data.error);
           console.error("API Error:", data.error);
         } else {
-          setPortfolioData(data);
+          setPortfolioData(data.portfolio);
+                    const preferredTheme = themes.find((t) => t.id === data.preferences.theme);
+          if(preferredTheme?.theme){
+            dispatch(setTheme(preferredTheme?.theme));
+          }
         }
       } catch (err) {
         if (err instanceof Error) {
@@ -114,14 +122,16 @@ export default function ActionDispatchWrapper({
       ) : (
         <>
           {children}
-          <div className="fixed bottom-8 right-8 flex flex-col items-center justify-center gap-3">
-            <PromptButton
-              handlePromptSubmit={handlePromptSubmit}
-              placeholder="Ask me anything..."
-              buttonText="Ask AI"
-            />
-            <ThemeSelector />
-          </div>
+          {pathName.split("/").at(-1) === "edit" && (
+            <div className="fixed bottom-8 right-8 flex flex-col items-center justify-center gap-3">
+              <PromptButton
+                handlePromptSubmit={handlePromptSubmit}
+                placeholder="Ask me Edit anything..."
+                buttonText="Edit with AI"
+              />
+              <ThemeSelector username={username} />
+            </div>
+          )}
         </>
       )}
     </>

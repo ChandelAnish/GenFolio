@@ -16,17 +16,11 @@ export default function DashboardPage() {
 
   // Generate portfolio URL based on user info - this would typically come from your backend
   useEffect(() => {
-    console.log(user?.primaryEmailAddress?.emailAddress)
-    const sessionProfileData = JSON.parse(
-      sessionStorage.getItem("portfolioDetails") ?? "{}"
+    setUsername(user?.primaryEmailAddress?.emailAddress);
+    // setProfileImg(sessionProfileData.profileData.profileImage);
+    setPortfolioUrl(
+      `http://localhost:3000/portfolio/${user?.primaryEmailAddress?.emailAddress}`
     );
-    if (Object.keys(sessionProfileData).length != 0) {
-      setUsername(user?.primaryEmailAddress?.emailAddress);
-      setProfileImg(sessionProfileData.profileData.profileImage);
-      setPortfolioUrl(
-        `http://localhost:3000/api/${user?.primaryEmailAddress?.emailAddress}`
-      );
-    }
   }, [user]);
 
   const handleCopyUrl = async () => {

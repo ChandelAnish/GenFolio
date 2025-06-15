@@ -1,4 +1,3 @@
-import ActionDispatchWrapper from "@/components/ActionDispatchWrapper";
 import StoreProvider from "@/store/StoreProvider";
 import "./globals.css";
 

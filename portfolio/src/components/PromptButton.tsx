@@ -94,7 +94,7 @@ const PromptButton: React.FC<PromptButtonProps> = ({
         >
           <div className="px-4 pt-4">
             <h3 className="text-sm font-bold text-gray-800 dark:text-gray-300">
-              MODIFY WITH AI
+              EDIT WITH AI
             </h3>
           </div>
           <div className="p-4">

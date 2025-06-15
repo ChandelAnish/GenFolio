@@ -9,12 +9,11 @@ import { useEffect } from "react";
 export default function useVisitorCount(
   portfolioData: PortfolioData | undefined, username: string
 ) {
-  console.log(username)
+  // console.log(username)
   const dispatch = useAppDispatch();
   
   useEffect(() => {
     if (username && portfolioData && portfolioData.introduction && Object.keys(portfolioData.introduction).length != 0) {
-      console.log("hello woooow")
       const safeUsername = username.replace(/\./g, '%2E').replace(/@/g, '%40');
 
       fetch(`/api/${safeUsername}/track-visitor`)

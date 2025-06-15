@@ -1,5 +1,6 @@
 import connectToDB from "@/lib/mongodb";
 import UserPortfolioData from "@/models/UserPortfolioDataModel";
+import { savePortfolioDataToFile } from "@/utils/savePortfolioData";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
@@ -18,7 +19,7 @@ export async function GET(
   await connectToDB();
 
   const userPortfolioData = await UserPortfolioData.findOne({
-    "userInput.profileData.email": username,
+    username: username,
   });
 
   if (!userPortfolioData) {
@@ -28,7 +29,7 @@ export async function GET(
     );
   }
 
-  return NextResponse.json(userPortfolioData.portfolio);
+  return NextResponse.json(userPortfolioData);
 }
 
 export async function PATCH(
@@ -46,11 +47,11 @@ export async function PATCH(
       { status: 400 }
     );
   }
-
+console.log(username)
   await connectToDB();
 
   const updatedPortfolioData = await UserPortfolioData.findOneAndUpdate(
-    { "userInput.profileData.email": username },
+    { username: username },
     { portfolio: newPortfolioData.newPortfolioData },
     { new: true, runValidators: true }
   );
@@ -60,5 +61,6 @@ export async function PATCH(
       { status: 404 }
     );
   }
+
   return NextResponse.json(updatedPortfolioData);
 }

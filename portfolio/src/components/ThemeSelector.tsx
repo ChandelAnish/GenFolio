@@ -6,9 +6,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import { setTheme } from "@/store/theme";
 import { ThemeOption } from "@/types";
+import axios from "axios";
 
-
-const themes: ThemeOption[] = [
+export const themes: ThemeOption[] = [
   {
     id: "default",
     name: "Cyan Night",
@@ -345,16 +345,198 @@ const themes: ThemeOption[] = [
       },
     },
   },
+  {
+    id: "sakuraPink",
+    name: "Sakura Pink",
+    primaryColor: "#ec4899",
+    secondaryColor: "#be185d",
+    previewColors: ["#ec4899", "#be185d", "#374151", "#111827"],
+    theme: {
+      bodyTheme: {
+        backgroundGradientFrom: "from-pink-900/30",
+        backgroundGradientTo: "to-gray-900",
+      },
+      heroTheme: {
+        sectionBackground: "bg-gray-800",
+        overlayGradientStart: "from-pink-800/20",
+        overlayGradientEnd: "to-gray-900/65",
+        accentColor: "text-pink-400",
+        accentButtonHover: "hover:bg-pink-600",
+        accentBackground: "bg-pink-500",
+        accentHover: "hover:bg-pink-400",
+        accentTextHover: "hover:text-pink-400",
+        heading: "text-gray-100",
+        subheading: "text-gray-300",
+        navLink: "text-gray-400",
+        bodyText: "text-gray-400",
+        iconBackground: "bg-gray-700",
+        buttonText: "text-white",
+        hoverButtonText: "hover:text-white",
+      },
+      experiencesTheme: {
+        headingGradientStart: "from-gray-100",
+        headingGradientEnd: "to-pink-400",
+        timelineBackground: "bg-gray-700",
+        timelineProgressStart: "from-pink-500",
+        timelineProgressEnd: "to-fuchsia-400",
+      },
+      experienceCardTheme: {
+        timelineDotColor: "bg-pink-500",
+        timelineDotOuterColor: "before:bg-pink-400",
+        cardBgGradient: "bg-gradient-to-br from-pink-950/45 to-gray-800",
+        companyTextColor: "text-pink-400",
+        roleTextColor: "text-gray-300",
+        durationTextColor: "text-gray-500",
+        descriptionTextColor: "text-gray-400",
+        highlightBgColor: "bg-pink-950/30",
+        highlightTextColor: "text-gray-400",
+      },
+      projectTheme: {
+        headingGradient:
+          "bg-gradient-to-br from-gray-100 to-pink-400 bg-clip-text text-transparent",
+        subtextColor: "text-gray-500",
+      },
+      projectCardTheme: {
+        containerGradient: "bg-gradient-to-br from-pink-950/25 to-gray-900/75",
+        borderColor: "border-pink-900/40",
+        titleColor: "text-gray-100",
+        linkColor: "text-gray-500",
+        linkHoverColor: "hover:text-pink-400",
+        descriptionColor: "text-gray-500",
+        techBackground: "bg-gray-700/55",
+        techTextColor: "text-gray-400",
+      },
+      toolsAndTechnologiesTheme: {
+        sectionBg: "bg-gray-900/75",
+        headingGradient: "bg-gradient-to-br from-gray-100 to-pink-400",
+        headingText: "text-transparent",
+        chevronColor: "text-gray-500",
+      },
+      techStackCardTheme: {
+        cardBgColor: "bg-gray-800/65",
+        iconDefaultColor: "text-pink-400",
+        iconUnknownColor: "text-gray-600",
+        nameTextColor: "text-gray-400",
+      },
+      footerTheme: {
+        background: "bg-gray-900/85",
+        textPrimary: "text-gray-100",
+        textSecondary: "text-gray-500",
+        iconDefault: "text-gray-500",
+        iconHover: "hover:text-pink-400",
+        dotColor: "bg-pink-500",
+        copyrightText: "text-gray-600",
+      },
+    },
+  },
+  {
+    id: "crimson",
+    name: "Crimson Fire",
+    primaryColor: "#ef4444",
+    secondaryColor: "#7f1d1d",
+    previewColors: ["#ef4444", "#7f1d1d", "#1f2937", "#000000"],
+    theme: {
+      bodyTheme: {
+        backgroundGradientFrom: "from-red-900/40",
+        backgroundGradientTo: "to-black",
+      },
+      heroTheme: {
+        sectionBackground: "bg-gray-900",
+        overlayGradientStart: "from-red-800/20",
+        overlayGradientEnd: "to-black/60",
+        accentColor: "text-red-400",
+        accentButtonHover: "hover:bg-red-700",
+        accentBackground: "bg-red-500",
+        accentHover: "hover:bg-red-400",
+        accentTextHover: "hover:text-red-400",
+        heading: "text-gray-100",
+        subheading: "text-gray-300",
+        navLink: "text-gray-400",
+        bodyText: "text-gray-400",
+        iconBackground: "bg-gray-800",
+        buttonText: "text-white",
+        hoverButtonText: "hover:text-white",
+      },
+      experiencesTheme: {
+        headingGradientStart: "from-gray-100",
+        headingGradientEnd: "to-red-400",
+        timelineBackground: "bg-gray-800",
+        timelineProgressStart: "from-red-500",
+        timelineProgressEnd: "to-orange-400",
+      },
+      experienceCardTheme: {
+        timelineDotColor: "bg-red-500",
+        timelineDotOuterColor: "before:bg-red-400",
+        cardBgGradient: "bg-gradient-to-br from-red-950/60 to-gray-900",
+        companyTextColor: "text-red-400",
+        roleTextColor: "text-gray-300",
+        durationTextColor: "text-gray-500",
+        descriptionTextColor: "text-gray-400",
+        highlightBgColor: "bg-red-950/30",
+        highlightTextColor: "text-gray-400",
+      },
+      projectTheme: {
+        headingGradient:
+          "bg-gradient-to-br from-gray-100 to-red-400 bg-clip-text text-transparent",
+        subtextColor: "text-gray-500",
+      },
+      projectCardTheme: {
+        containerGradient: "bg-gradient-to-br from-red-950/30 to-black/80",
+        borderColor: "border-red-900/50",
+        titleColor: "text-gray-100",
+        linkColor: "text-gray-500",
+        linkHoverColor: "hover:text-red-400",
+        descriptionColor: "text-gray-500",
+        techBackground: "bg-gray-800/60",
+        techTextColor: "text-gray-400",
+      },
+      toolsAndTechnologiesTheme: {
+        sectionBg: "bg-black/70",
+        headingGradient: "bg-gradient-to-br from-gray-100 to-red-400",
+        headingText: "text-transparent",
+        chevronColor: "text-gray-500",
+      },
+      techStackCardTheme: {
+        cardBgColor: "bg-gray-900/80",
+        iconDefaultColor: "text-red-400",
+        iconUnknownColor: "text-gray-600",
+        nameTextColor: "text-gray-400",
+      },
+      footerTheme: {
+        background: "bg-black/80",
+        textPrimary: "text-gray-100",
+        textSecondary: "text-gray-500",
+        iconDefault: "text-gray-500",
+        iconHover: "hover:text-red-400",
+        dotColor: "bg-red-500",
+        copyrightText: "text-gray-600",
+      },
+    },
+  },
 ];
 
-const ThemeSelector = () => {
+const ThemeSelector = ({username}: {username: string}) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTheme, setSelectedTheme] = useState("default");
   const modalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
+  const savePreferences = async(theme: string) => {
+    try {
+      const {data} = await axios.patch(
+        `http://localhost:3000/api/${username}/save-preferences`,
+        {
+          theme,
+        }
+      );
+      console.log(data);
+    } catch (error) {
+      console.error("Error Saving Preferences to database : ", error);
+    }
+  };
+
   // Apply theme change
-  const applyTheme = (themeId: string) => {
+  const applyTheme = async (themeId: string) => {
     setSelectedTheme(themeId);
 
     // Find the selected theme
@@ -364,6 +546,9 @@ const ThemeSelector = () => {
 
     // Dispatch the theme change
     dispatch(setTheme(theme.theme));
+
+    // Save Preferences in DB
+    await savePreferences(themeId)
 
     // Close the modal after selection
     setTimeout(() => setIsOpen(false), 300);
