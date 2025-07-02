@@ -4,6 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { GiArtificialHive } from "react-icons/gi";
 import { VscDebugStart } from "react-icons/vsc";
+import { AiOutlineEye } from "react-icons/ai";
 import { motion } from "framer-motion";
 
 export default function Hero() {
@@ -48,13 +49,14 @@ export default function Hero() {
           🚀 Let&apos;s create!
         </motion.p>
 
-        {/* Build Portfolio button */}
+        {/* Buttons */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 2, ease: "easeInOut", delay: 0.3 }}
-          className="w-full sm:w-auto"
+          className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto"
         >
+          {/* Build Portfolio button */}
           <Link
             href="/portfolio-details/add-profile-details"
             className="w-full sm:w-auto bg-black border border-cyan-600 text-cyan-500 px-4 sm:px-6 py-2 sm:py-3 rounded-full flex items-center justify-center hover:bg-cyan-900 hover:bg-opacity-20 transition-all duration-300 text-sm sm:text-base"
@@ -62,6 +64,17 @@ export default function Hero() {
             <VscDebugStart size={18} className="mr-2" />
             Build Portfolio
           </Link>
+
+          {/* See Demo button */}
+          <a
+            href="https://chandel-anish.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full sm:w-auto bg-black border border-cyan-600 text-cyan-500 px-4 sm:px-6 py-2 sm:py-3 rounded-full flex items-center justify-center hover:bg-cyan-900 hover:bg-opacity-20 transition-all duration-300 text-sm sm:text-base"
+          >
+            <AiOutlineEye size={19} className="mr-2" />
+            Demo
+          </a>
         </motion.div>
       </div>
     </div>

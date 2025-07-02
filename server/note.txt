@@ -1,7 +1,14 @@
 return {updatedHeroData} // updatedHeroData is python dict
 
     {updatedHeroData} --> it is not a dictionary, it is a set instead.
-
     -> You're trying to return a set containing a dictionary (updatedHeroData appears to be a dictionary). In Python, dictionaries are mutable and therefore can't be used as elements in a set or as keys in another dictionary since they're unhashable.
-
     -> Set items are unordered, unchangeable, and do not allow duplicate values.
+
+---------
+🤖 max_tokens=4096 in your code
+        That setting limits how many tokens the model can generate in its response, even if the model supports more.
+
+🧠 Model token capacity vs max_tokens
+        Model capacity (like 32,768 for llama-3.3-70b-versatile) = max total tokens for input + output.
+
+max_tokens=4096 = you're allowing the model to generate up to 4096 output tokens, even if it could generate more.

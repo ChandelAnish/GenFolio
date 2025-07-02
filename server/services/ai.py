@@ -6,28 +6,41 @@ from langchain_core.prompts import PromptTemplate
 from typing import List
 import json
 from ..schemas import PortfolioData, RequestProfileData
-# from langchain_google_genai import ChatGoogleGenerativeAI
-
+from langchain_google_genai import ChatGoogleGenerativeAI
 
 load_dotenv()
 
-# google_llm = ChatGoogleGenerativeAI(
-#     model="gemini-1.5-pro",
+google_llm = ChatGoogleGenerativeAI(
+    model="gemini-2.0-flash-001",
+    temperature=0.2,
+    max_tokens=None,
+    timeout=None,
+    max_retries=2,
+    # other params...
+)
+
+# llm = ChatGroq(
+#     model="llama-3.3-70b-versatile",
 #     temperature=0,
 #     max_tokens=None,
 #     timeout=None,
 #     max_retries=2,
-#     # other params...
 # )
 
-llm = ChatGroq(
-    model="llama-3.3-70b-versatile",
-    temperature=0,
-    max_tokens=None,
-    timeout=None,
+llama70_llm = ChatGroq(
+    model="llama-3.3-70b-versatile", # 32,768 token
+    temperature=0.2,
+    max_tokens=4096,
+    timeout=60,
     max_retries=2,
 )
-
+gemma2_llm = ChatGroq(
+    model="gemma2-9b-it",# 8,192 token
+    temperature=0.2,
+    max_tokens=4096,
+    timeout=60,
+    max_retries=2,
+)
 
 parser = JsonOutputParser(
     pydantic_object=PortfolioData
@@ -40,9 +53,12 @@ prompt = PromptTemplate(
     partial_variables={"format_instructions": parser.get_format_instructions()},
 )
 
-
-chain = prompt | llm | parser
-
+# List of LLMs in order of preference (primary -> fallback)
+llm_models = [
+    ("google_llm", google_llm),
+    ("llama70_llm", llama70_llm),
+    ("gemma2_llm", gemma2_llm),
+]
 
 async def portfolioDataGenerator(requestPortfolioData: RequestProfileData):
     query = f"""
@@ -60,8 +76,27 @@ Here is the input data:
 {requestPortfolioData}
 
 """
-    result = chain.invoke({"query": query})
-    return result
+    
+    # Try each LLM in order until one succeeds
+    last_exception = None
+    for model_name, model in llm_models:
+        try:
+            print(f"Trying {model_name}...")
+            chain = prompt | model | parser
+            result = chain.invoke({"query": query})
+            print(f"Successfully generated portfolio data using {model_name}")
+            return result
+        except Exception as e:
+            print(f"Error with {model_name}: {e}")
+            last_exception = e
+            continue
+    
+    # If all LLMs fail, raise the last exception
+    if last_exception:
+        print("All LLM models failed")
+        raise last_exception
+    
+    return None
 
 
 # print(portfolioDataGenerator())
