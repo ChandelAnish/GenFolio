@@ -58,7 +58,7 @@ export default function Hero() {
         >
           {/* Build Portfolio button */}
           <Link
-            href="/portfolio-details/add-profile-details"
+            href="/portfolio-details/choose-input-method"
             className="w-full sm:w-auto bg-black border border-cyan-600 text-cyan-500 px-4 sm:px-6 py-2 sm:py-3 rounded-full flex items-center justify-center hover:bg-cyan-900 hover:bg-opacity-20 transition-all duration-300 text-sm sm:text-base"
           >
             <VscDebugStart size={18} className="mr-2" />

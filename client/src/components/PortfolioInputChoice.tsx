@@ -150,7 +150,7 @@ export default function PortfolioInputChoice() {
                   />
                   <label
                     htmlFor="resume-upload"
-                    className="bg-transparent border border-cyan-500 text-cyan-500 px-6 py-3 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300 cursor-pointer inline-block font-medium"
+                    className="bg-transparent border border-cyan-500 text-cyan-500 px-6 py-3 rounded-full hover:bg-cyan-600 hover:text-white transition-all duration-300 cursor-pointer inline-block font-medium"
                   >
                     Choose File
                   </label>
@@ -196,7 +196,7 @@ export default function PortfolioInputChoice() {
 
             <Link
               href="/portfolio-details/add-profile-details"
-              className="mt-16 w-full font-medium text-center block bg-transparent border border-cyan-500 text-cyan-500 px-6 py-3 rounded-full hover:bg-cyan-500 hover:text-white transition-all duration-300 cursor-pointer">
+              className="mt-16 w-full font-medium text-center block bg-transparent border border-cyan-500 text-cyan-500 px-6 py-3 rounded-full hover:bg-cyan-600 hover:text-white transition-all duration-300 cursor-pointer">
               Start Manual Entry
             </Link>
           </motion.div>
