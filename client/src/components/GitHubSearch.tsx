@@ -6,7 +6,7 @@ import axios from 'axios';
 import SearchGithubUsers from './SearchGithubUsers';
 import Repositories from './Repositories';
 import { GithubUser, Project, Repository } from '@/types';
-import { useAppDispatch } from '@/hooks/customHooks';
+import { useAppDispatch, useAppSelector } from '@/hooks/customHooks';
 import { fillInitialProfileDetails, fillProjects } from '@/store/portfolioDetailsSlice';
 import { useRouter } from 'next/navigation'; 
 
@@ -22,14 +22,23 @@ export default function GitHubSearch() {
   const [selectedRepos, setSelectedRepos] = useState<Repository[]>([]);
   const dispatch = useAppDispatch()
   const router = useRouter()
+  const portfolioDetails = useAppSelector((store => store.portfolioDetails))
 
   useEffect(() => {
-    // load profile data details from session storage
-    const sessionProfileData = JSON.parse(
-      sessionStorage.getItem("portfolioDetails") ?? "{}"
-    );
+  console.log(portfolioDetails)
+  
+  // load profile data details from session storage
+  const sessionProfileData = JSON.parse(
+    sessionStorage.getItem("portfolioDetails") ?? "{}"
+  );
+
+  setSearchQuery((portfolioDetails?.profileData?.githubUsername)
+      ? portfolioDetails?.profileData?.githubUsername 
+      : sessionProfileData?.profileData?.githubUsername
+  )
+  
     if (Object.keys(sessionProfileData).length != 0) {
-      // console.log(sessionProfileData);
+      console.log(sessionProfileData);
       dispatch(fillInitialProfileDetails(sessionProfileData));
       setSelectedUser(sessionStorage.getItem("selectedGithubUser"))
       const projects: Project[] = sessionProfileData.projects;
@@ -106,7 +115,7 @@ export default function GitHubSearch() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 flex flex-col items-center mt-28">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 flex flex-col items-center mt-20">
       <h1 className="text-2xl sm:text-3xl font-bold mb-6 bg-gradient-to-r from-white to-cyan-500 bg-clip-text text-transparent">Add Projects from GitHub</h1>
       
       <div className="flex justify-center w-full">

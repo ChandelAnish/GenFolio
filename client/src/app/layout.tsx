@@ -18,7 +18,7 @@ export default async function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" className="dark">
         <body>
           <StoreProvider>
             <div className="w-full min-h-screen flex flex-col justify-center bg-gradient-to-t from-cyan-700/30 to-black">

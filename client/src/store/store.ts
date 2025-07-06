@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
 import portfolioDetailsSliceReducer from './portfolioDetailsSlice'
+import extractedResumeDetailsSliceReducer from './extractedResumeDetailsSlice'
 
 export const store = configureStore({
   reducer: {
     portfolioDetails: portfolioDetailsSliceReducer,
+    extractedResumeDetails: extractedResumeDetailsSliceReducer,
   }
 })
 

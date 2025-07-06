@@ -23,7 +23,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (isProtectedRoute(req)) {
       if (!hasPortfolio && req.nextUrl.pathname === "/dashboard") {
         return NextResponse.redirect(
-          new URL("/portfolio-details/add-profile-details", req.url)
+          new URL("/portfolio-details/choose-input-method", req.url)
         );
       } else if (hasPortfolio) {
         if (req.nextUrl.pathname !== "/dashboard") {

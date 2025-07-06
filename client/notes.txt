@@ -552,3 +552,829 @@ Because window is the default global object, so you don’t always need to write
 
 
 
+
+
+
+🧱 Line of code:
+
+window.pdfjsLib.GlobalWorkerOptions.workerSrc = 
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+🔍 What is happening here?
+We are telling PDF.js: “Here is the location (URL) of your helper file that you need to read PDF files.”
+
+📦 What is pdf.worker.min.js?
+It is a worker file.
+Think of it as a background helper that PDF.js uses to do heavy work (like parsing and rendering PDFs) without freezing the page.
+
+🛠️ What is GlobalWorkerOptions.workerSrc?
+It is a setting in PDF.js where you tell it:
+
+"When you want to use your worker, load it from this link."
+
+🧠 Why do we need to set it?
+If you don’t set this line, PDF.js will throw an error like: ❌ “The workerSrc property must be set.”
+Because it doesn’t know where to find its helper file.
+
+✅ Simple English Explanation
+“Hey PDF.js, when you need help reading a PDF, go to this link and get your helper file.”
+
+🧠 Analogy
+Imagine:
+
+PDF.js is a chef 👨‍🍳
+The chef has a helper (worker) 👨‍🍳 who lives in another house.
+Before cooking, you must give the chef the address of the helper:
+
+
+
+
+
+
+
+❓ Does this line actually download the worker file?
+
+window.pdfjsLib.GlobalWorkerOptions.workerSrc = 
+  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+👉 NO, this line does not download anything immediately.
+
+📦 What it really does:
+This line simply tells PDF.js: “When you need your background helper (worker), go to this URL and download it.”
+
+💡 So when is it downloaded?
+The file at 'pdf.worker.min.js' is only downloaded when PDF.js starts doing some actual PDF work, like:
+
+Reading pages
+Extracting text
+Rendering pages
+
+That's when PDF.js says: “Okay, now I need my helper... let me go download it from the URL you gave me.”
+
+
+🔁 So the flow is:
+
+🔗 Set the URL to the helper file (with workerSrc)
+💤 Nothing happens yet
+🧾 You try to extract or render a PDF
+🏃‍♂️ PDF.js downloads and runs the worker file
+
+🧠 Conclusion
+This line sets the path — it does NOT download.
+The file is downloaded later, automatically by PDF.js, when it’s needed.
+
+
+
+
+
+
+
+
+await pdfjsLib.getDocument({ data: arrayBuffer })
+This tells PDF.js: “Here's the PDF file's raw data — I want you to start loading this document.”
+
+PDF.js begins to read and load the PDF file in the background.
+But… loading takes time.
+
+
+
+.promise
+pdfjsLib.getDocument(...)
+This doesn't return a Promise directly.
+
+It returns a PDF loading task object, like this:
+{
+  promise: Promise<PDFDocument>,
+  destroy: Function,
+  onProgress: Function,
+  ...
+}
+So to get the actual PDFDocument, you have to access .promise inside it.
+
+
+
+So:
+pdfjsLib.getDocument({ data: arrayBuffer }).promise
+means: “Start loading the PDF, and let me know when you're done.”
+
+
+
+
+
+
+
+
+
+const textContent = await page.getTextContent();
+
+🧠 What it means in one line:
+“Get all the words (text pieces) from this page of the PDF.”
+
+🔍 Breakdown:
+✅ page
+This is one page of the PDF (you got it using await pdf.getPage(pageNum)).
+
+✅ getTextContent()
+This is a function provided by PDF.js that:
+
+Pulls out all the visible text on the page.
+But it gives you the text in small parts — not one big string.
+Each part looks like this:
+
+
+{ str: "Hello", ... }
+{ str: "world", ... }
+So you need to join them later (which you already do in your code).
+
+await page.getTextContent() return:
+{
+  items: [
+    {
+      str: "Hello",             // The actual text
+      dir: "ltr",               // Text direction (left-to-right)
+      width: 42.56,             // Width of the text block
+      height: 12.8,             // Height of the text block
+      transform: [1, 0, 0, 1, 100, 700], // Positioning on page
+      fontName: "g_d0_f1"       // Internal font name
+    },
+    {
+      str: "world",
+      ...
+    },
+    ...
+  ],
+  styles: {
+    "g_d0_f1": {
+      fontFamily: "Arial",
+      ascent: 0.9,
+      descent: -0.2,
+      fontWeight: "normal"
+    }
+  }
+}
+
+It returns an object with:
+        items: An array of small text chunks (like individual words or lines).
+        styles: Extra info about the fonts used for those chunks.
+
+✅ await
+Because this process takes time (PDF reading is slow), we add await to: Wait for the text to finish loading before moving on.
+
+✅ Full Meaning
+
+const textContent = await page.getTextContent();
+means: “Ask PDF.js to give me all the small pieces of text from this page, and wait until it's done.”
+
+📦 Example of textContent.items
+After running that line, you’ll get something like:
+
+{
+  items: [
+    { str: "Hello" },
+    { str: "world" },
+    { str: "from" },
+    { str: "page" },
+    { str: "1" }
+  ]
+}
+You then combine those using .map(...).join(" ") in the next line to form: "Hello world from page 1"
+
+
+
+
+
+
+
+
+
+
+
+
+✅ What is getAnnotations()?
+📌 In simple terms:
+getAnnotations() gets all the extra interactive elements (called annotations) on a PDF page — like links, buttons, form fields, etc.
+getAnnotations() is a method provided by PDF.js.
+
+🧠 Think of a PDF page like a picture:
+        - The text is what you see and read
+        - The annotations are interactive stuff on top of the page, like:
+                Hyperlinks
+                Clickable buttons
+                Checkboxes
+                Signatures
+                etc.
+
+📦 Example:
+If a page says:
+
+"Visit Google"
+And you can click on the word "Google" — that’s a Link annotation.
+
+✅ What does getAnnotations() return?
+It returns an array of objects like this:
+
+[
+  {
+    subtype: "Link",
+    url: "https://google.com",
+    ...
+  },
+  {
+    subtype: "Widget",
+    fieldType: "Btn",
+    ...
+  }
+]
+
+✅ What is subtype?
+🏷️ subtype is a label that tells you what kind of annotation it is.
+Some common subtype values:
+
+subtype	        Meaning
+"Link"	        A clickable hyperlink
+"Widget"	A form field (button, input box)
+"Text"	        A popup text note
+"Highlight"	A highlight over some text
+
+
+In your code, you’re only interested in this:
+
+if (annotation.subtype === "Link")
+That means:
+
+"If this annotation is a clickable link, process it."
+
+🧠 Summary:
+Term	                Meaning
+getAnnotations()	Returns all the interactive items on a PDF page
+subtype	                Tells you what kind of interactive item it is (like "Link" for a hyperlink)
+
+
+
+
+
+Not all PDFs define links the same way. There are 2 common ways to define a clickable link:
+
+1. Direct URL link
+        {
+          subtype: "Link",
+          url: "https://example.com"
+        }
+        This is the simple and common way.
+
+2. Action-based URL link
+        {
+          subtype: "Link",
+          action: {
+            type: "URI",
+            url: "https://example.com"
+          }
+        }
+
+
+
+
+
+
+
+
+
+✅ What is .match() in JavaScript?
+📌 Answer: match() is a built-in JavaScript string method.
+
+✅ Syntax:
+        const matches = string.match(regex);
+        string is any text you want to search in.
+
+regex is the pattern you want to find (a regular expression).
+
+🧠 What does it return?
+Case	                        What it returns
+If the pattern is found	        → An array of all matches (if using /g)
+If nothing is found	        → null
+
+
+
+✅ 1. String.prototype.replace()
+🔧 What it does:
+Replaces parts of a string with something else.
+
+✅ Syntax:
+string.replace(searchPattern, replacement)
+Parameter	Meaning
+searchPattern	What to find (can be a string or a regex)
+replacement	What to put instead
+
+✅ Returns:
+A new string with replacements made.
+(It does not change the original string.)
+
+🧠 Example:
+"123-456".replace("-", "")  // "123456"
+"987 654 3210".replace(/[\s\-]/g, "")  // "9876543210"
+
+Explanation:
+/[\s\-]/g = match all spaces and dashes
+"" = replace with nothing (i.e., remove them)
+
+
+
+
+✅ 2. RegExp.prototype.test()
+🔍 What it does:
+Checks if a pattern (regex) exists in a string.
+
+✅ Syntax:
+
+pattern.test(string)
+Parameter	Meaning
+pattern	        A regular expression (e.g. /\d{7,}/)
+string	        The string to test the pattern on
+
+✅ Returns:
+true if the pattern is found, false if not.
+
+🧠 Example:
+
+/\d{7,}/.test("1234567")   // true ✅ (has 7 digits)
+/\d{7,}/.test("12345")     // false ❌ (only 5 digits)
+
+✅ Summary
+Method	        Purpose	Takes	                                        Returns
+replace	        Change part of a string	(pattern, replacement)	        New string
+test	        Check if a pattern is found	(string)	        true / false
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+----------------------------
+
+An <iframe> (short for inline frame) is an HTML element that lets you embed another webpage inside your current webpage—like a window showing content from another website.
+
+🔍 In simple words:
+An iframe is like putting a mini browser inside your page.
+You can use it to show things like:
+
+YouTube videos 🎥
+Google Maps 🗺️
+Another website 🌐
+PDF files 📄
+
+📦 Example:
+
+<iframe
+  src="https://www.youtube.com/embed/dQw4w9WgXcQ"
+  width="560"
+  height="315"
+  allowfullscreen
+></iframe>
+✅ This shows a YouTube video player right inside your website.
+
+🛠 Common uses:
+
+Embedding YouTube videos
+Embedding Google Forms or Maps
+Showing external tools or dashboards
+Displaying a PDF or another webpage
+
+⚠️ Note:
+Iframes load external content, so they may be blocked if the other site doesn’t allow embedding.
+You don’t control the content inside the iframe—it’s like viewing another website.
+
+🔐 Security Tip:
+Iframes can introduce security risks (e.g., clickjacking), so: Only embed trusted content
+Use attributes like sandbox, allow, and referrerpolicy to control behavior
+
+🧠 Analogy:
+Imagine your webpage is a house, and the iframe is like a TV on the wall that plays content from another channel (website). You can see it, but it’s coming from outside.
+
+
+
+
+
+
+
+
+🔹 What is embedding?
+Embedding means inserting content from one source into another.
+In websites, it usually means showing content from another website inside your own—without copying it.
+
+✅ Example:
+Let’s say you want to show a YouTube video on your webpage.
+
+You could embed it like this:
+
+<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>
+This shows the video from YouTube, but inside your own site.
+
+📌 So in simple terms:
+Term	        Meaning
+Embedding	Showing content from another site inside yours (like videos, maps, tweets, etc.)
+Iframe	        The HTML tool used to do the embedding
+
+🔒 Why sites might block embedding:
+Some websites don’t allow others to embed their content for:
+
+Security reasons
+Privacy protection
+Brand control (they want people to visit their site directly)
+
+They block it by setting HTTP headers like:
+                X-Frame-Options: DENY
+                Content-Security-Policy: frame-ancestors 'none';
+
+🧠 Analogy:
+Imagine embedding is like showing a live feed from another TV channel in your room. If that channel doesn’t give you permission, the screen stays black.
+
+
+
+
+
+
+
+
+To help improve security, privacy, and behavior control when you're embedding external content use :
+
+🔐 1. sandbox
+The sandbox attribute applies extra restrictions to the embedded content.
+
+✳️ By default:
+When you add sandbox, the iframe loses many permissions — it can’t:
+
+        - Run JavaScript
+        - Submit forms
+        - Open new windows/tabs
+        - Access your cookies or local storage
+
+
+✅ Example:
+
+<iframe src="..." sandbox></iframe>
+This fully locks down the iframe.
+
+You can give back specific permissions like this:
+
+<iframe src="..." sandbox="allow-scripts allow-forms"></iframe>
+🔓 Common options:
+
+Value	                What it allows
+allow-scripts	        Run JavaScript
+allow-forms	        Submit forms
+allow-same-origin	Be treated as same-origin (for cookies, etc.)
+allow-popups	        Open new windows/tabs
+
+
+
+✅ 2. allow
+This attribute lets you allow specific features in the iframe (like camera access, autoplay, fullscreen, etc.).
+
+✅ Example:
+
+<iframe
+  src="https://www.youtube.com/embed/xyz"
+  allow="autoplay; fullscreen"
+></iframe>
+
+🧩 Common feature values:
+
+Value	                What it allows
+autoplay	        Automatically play audio/video
+fullscreen	        Enter fullscreen mode
+camera / microphone	Use camera/mic
+clipboard-write	        Access clipboard
+encrypted-media	        Play DRM-protected media
+geolocation	        Use GPS location
+
+
+DRM protected content refers to digital media, such as videos, music, ebooks, or software, that has been encrypted and secured using Digital Rights Management (DRM) technology. This prevents unauthorized access, copying, distribution, and other actions that would violate the content owner's rights. Essentially, DRM ensures that only authorized users can access and use the content, according to the permissions granted by the content creator or distributor. 
+
+
+
+🛡 3. referrerpolicy
+This controls what referrer information (i.e., the URL of your page) is sent to the iframe’s source.
+
+✅ Example:
+
+<iframe
+  src="https://example.com"
+  referrerpolicy="no-referrer"
+></iframe>
+
+🧩 Common values:
+
+Value	                                What it does
+no-referrer	                        Sends no referrer at all
+origin	                                Sends just the domain (https://yoursite.com)
+strict-origin-when-cross-origin	        Sends full URL to same origin, only domain to others
+unsafe-url	                        Sends full URL always (⚠ not recommended)
+
+
+🧠 Summary Table
+Attribute	        Purpose
+sandbox	                Restrict iframe capabilities (security)
+allow	                Enable specific browser features
+referrerpolicy	        Control what referrer is shared
+
+
+
+
+
+
+
+🔍 What is a referrer?
+A referrer (also called HTTP referrer) is the URL of the webpage that a user came from before landing on another page.
+
+✅ Example:
+Let’s say:
+
+You’re on https://yourwebsite.com/page1
+You click a link that takes you to https://example.com
+When your browser opens example.com, it sends this in the request headers:
+
+Referer: https://yourwebsite.com/page1
+✅ This tells example.com: "Hey, the user came from yourwebsite.com/page1"
+
+🔎 Why referrer is useful:
+                Analytics: see where users are coming from
+                Security: detect suspicious traffic
+                Marketing: track click sources (e.g., from email, ad, or social media)
+
+⚠️ Why you might want to control the referrer (using referrerpolicy):
+Because it can reveal:
+
+        - Your page URL
+        - Your query params
+        - Sensitive paths (/private, /checkout?userId=123)
+        - You might not want to leak that info when embedding an iframe or opening links.
+
+✅ Example using referrerpolicy:
+
+<iframe
+  src="https://external-site.com"
+  referrerpolicy="no-referrer"
+/>
+This makes sure no referrer is sent to external-site.com.
+
+🧠 Summary:
+Term	Meaning
+Referrer	        The URL of the page that the user came from
+Sent by	                Your browser, automatically (unless blocked)
+Can be controlled by	The referrerpolicy attribute or HTTP headers
+
+
+
+
+
+
+🎥 What is a YouTube Video ID?
+A Video ID is a unique 11-character code that identifies a specific video on YouTube.
+
+🧠 Example:
+In this YouTube link: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+The Video ID is: dQw4w9WgXcQ
+
+It’s like the fingerprint or ID number for that video. No two videos share the same ID.
+
+❓ Why do we need the Video ID?
+YouTube uses the Video ID to: Find and play the correct video
+Embed videos inside a website (like you’re doing in your app)
+
+🔗 When embedding a video on a website:
+You don’t embed the whole YouTube URL — you just use the Video ID inside a special embed link: https://www.youtube.com/embed/{VIDEO_ID}
+
+For example: https://www.youtube.com/embed/dQw4w9WgXcQ
+This lets your website show the video inside an <iframe>.
+
+✅ In short:
+Term	Meaning
+Video ID	A unique 11-character code (e.g. dQw4w9WgXcQ)
+Why needed	Used to embed or play the correct video on your site
+How it's used	Inserted into an embed URL like https://www.youtube.com/embed/ID
+
+
+
+
+
+
+🔗 What is an Embed Link?
+An embed link is a special URL that lets you show a YouTube video directly inside your website using an <iframe>.
+
+It looks like this: https://www.youtube.com/embed/dQw4w9WgXcQ
+
+This is different from a normal YouTube link like: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+❓Why can’t I use the normal YouTube link in an <iframe>?
+Here's why not:
+
+🔍 Feature	                Normal Link (watch?v=...)	Embed Link (/embed/...)
+Designed for website embedding	❌ No	                                ✅ Yes
+Works inside <iframe>	        ❌ Often blocked or won’t autoplay	✅ Works perfectly in iframes
+Clean fullscreen experience	❌ Shows extra UI (comments, etc.)	✅ Just the video player
+Customization (autoplay, etc)	❌ Limited                               ✅ You can add params like autoplay=1
+
+
+✅ Use embed link when:
+
+        - You want to show the video directly inside your app/page
+        - You want autoplay, fullscreen, or to hide related videos
+        - You’re using an <iframe> (like your component does)
+
+
+🧪 What happens if you try the normal link?
+If you write:
+
+<iframe src="https://www.youtube.com/watch?v=dQw4w9WgXcQ"></iframe>
+It will either: Not show the video properly, or Open the full YouTube site inside the frame, which is not allowed or bad UX
+
+✅ Correct usage:
+
+<iframe 
+  src="https://www.youtube.com/embed/dQw4w9WgXcQ" 
+  allowfullscreen 
+></iframe>
+Works smoothly, looks clean, and is meant for embedding.
+
+
+
+
+
+
+🧩 What does component="iframe" do in this?
+
+<Box component="iframe" ... />
+👉 Normally:
+<Box> is a MUI (Material UI) component. By default, it renders as a <div>.
+
+👉 But with component="iframe":
+You're telling the MUI <Box> to render as an <iframe> instead of a <div>.
+
+✅ So this:
+<Box component="iframe" src="..." />
+is the same as writing:
+        <iframe src="..." />
+        ...but with MUI styling support (like sx={{ width: "100%" }} etc.)
+
+🎯 Why use it?
+You get:
+
+The power of MUI (like sx styling)
+But it still behaves like a regular <iframe>
+So: Looks like Box, acts like iframe 👌
+
+
+
+
+🔐 What does this do?
+allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+This is an iframe permission string. It tells the browser what the iframe is allowed to do.
+
+Let’s break them down:
+
+Permission	        What it allows
+accelerometer	        Lets the video respond to motion sensors (mostly for mobile/VR)
+autoplay	        Allows the video to start playing without clicking
+clipboard-write	        Lets the iframe copy data to the user's clipboard
+encrypted-media	        Allows playback of protected content (like DRM videos)
+gyroscope	        Lets the video react to device orientation (used in VR/360 videos)
+picture-in-picture	Allows users to pop out the video and keep watching while multitasking
+
+
+Picture-in-Picture(PiP) lets the video pop out into a small floating window so you can keep watching while doing something else on your screen.
+
+🔍 Example:
+You're watching a YouTube video → you tap the PiP button → The video shrinks into a small box in the corner of your screen → You can now browse other tabs or apps, and the video keeps playing.
+
+
+--------
+
+1) | in regex means "OR"
+2) ^ Means: start of the string
+        It tells the regex: "Start matching from the very beginning of the text."
+3) .*
+        . means: any character (except newline)
+        * means: zero or more times
+
+        So .* means: “Match anything, for as long as you want.”
+
+4) \w in regex means: Match any word character
+
+        🔍 What is a "word character"?
+        It includes:
+
+                - All letters: a–z, A–Z
+                - All digits: 0–9
+                - The underscore: _
+
+        So: \w  =  [a-zA-Z0-9_]
+
+
+        Regex	Meaning
+        \w	One word character (a-z, A-Z, 0-9, _)
+        \w+	One or more word characters
+        \w*	Zero or more word characters
+
+----------
+
+
+
+❓ What's the problem without asChild?
+If you don’t use asChild, TooltipTrigger wraps your element like this:
+
+<TooltipTrigger>
+  <button>Click me</button>
+</TooltipTrigger>
+
+This becomes:
+        <span>       ← Added by TooltipTrigger
+                <button>Click me</button>
+        </span>
+Now your button is inside a span, and:
+
+button styles like hover, focus, outline, etc. may not work correctly.
+If you're using flex, grid, or tooltips on icons, this can break layout or cause bugs.
+
+✅ What asChild does
+When you write:
+
+<TooltipTrigger asChild>
+  <button>Click me</button>
+</TooltipTrigger>
+
+
+It renders: <button>Click me</button>
+👉 No extra element — the button becomes the trigger directly.
+
+💡 So in short:
+Without asChild	                        With asChild ✅
+Adds a span around your element	        Uses your element directly
+Can break styles or layout	        Keeps your layout clean
+Not ideal for buttons/icons	        Perfect for interactive elements
+
+
+
+**asChild tells TooltipTrigger: “Don’t create your own element — just use my child (like a button or icon) directly.”
+
+
+❓ What happens to styles and other properties passed to <TooltipTrigger> when you use asChild?
+✅ Answer:
+When you use asChild, the props passed to TooltipTrigger are forwarded to its child — but only if the child supports receiving them.
+
+✅ Example:
+
+<TooltipTrigger asChild className="bg-red-500 p-2">
+  <button className="text-white">Click me</button>
+</TooltipTrigger>
+In this case:
+
+The className="bg-red-500 p-2" from TooltipTrigger will be merged with the child's <button> element.
+Resulting classes applied to <button> will be: bg-red-500 p-2 text-white
+
+✅ So yes — styles and event handlers (like onClick, onFocus, etc.) from TooltipTrigger are applied to the child.
+
+🧠 How does it work?
+This is possible because asChild uses a utility called <Slot /> from Radix UI, which:
+
+Takes all the props passed to TooltipTrigger (like className, style, onClick, etc.)
+Applies them to the child (like <button>, <div>, etc.)
+Merges className values
+
+⚠️ Important Notes:
+If the child already has className, style, etc., both will be merged, not overwritten.
+If the child can’t accept props (like a plain string), you’ll get an error — so the child must be a React element (like button, div, span, etc.).
+This only works because Radix’s Slot system forwards those props for you. It’s not the same as React’s {children}.
+
+-------------
+
+
+
+The /i in a regular expression means "case-insensitive" matching.
+
+Example:
+
+const regex = /hello/i;
+        console.log(regex.test("Hello")); // true
+        console.log(regex.test("HELLO")); // true
+        console.log(regex.test("HeLLo")); // true
+
+Without /i:
+
+const regex = /hello/;
+        console.log(regex.test("Hello")); // false
+
+
+Summary:
+/i is a flag -> It tells the regex engine to ignore case when matching letters (A vs a, B vs b, etc.).
+
+Other common flags:
+
+/g – global match (find all matches, not just the first)
+/m – multiline mode (changes how ^ and $ behave)
+/s – dotAll mode (dot . matches newline too)

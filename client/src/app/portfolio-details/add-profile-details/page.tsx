@@ -162,18 +162,18 @@ const ProfileComponent: React.FC = () => {
       if (profileData.profileImage) {
         const { data } = await axios.post(
           "http://localhost:4000/portfolio-details/add-profile-details/api",
-          { profileImage: profileData.profileImage, username: profileData.email }
+          { file: profileData.profileImage, userId: user?.id, category: "profile-image" }
         );
         setProfileData((prev) => ({
           ...prev,
-          profileImage: data.profileImageURL,
+          profileImage: data.fileURL,
         }));
-        // console.log(data.profileImageURL);
+        // console.log(data.fileURL);
 
         dispatch(
           fillprofileDetails({
             ...profileData,
-            profileImage: data.profileImageURL,
+            profileImage: data.fileURL,
           })
         );
       }

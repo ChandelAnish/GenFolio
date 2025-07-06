@@ -5,10 +5,22 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { FiUpload, FiEdit3, FiFileText, FiUser } from "react-icons/fi";
 import { AiOutlineCloudUpload } from "react-icons/ai";
+import { extractPDFData } from "@/utils/pdfExtractor";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import { fileToBase64 } from "@/utils/fileToBase64";
+import { useAppDispatch } from "@/hooks/customHooks";
+import { fillExtractedResumeDetails } from "@/store/extractedResumeDetailsSlice";
+import { getGithubAvatarUrl } from "@/utils/getGithubAvatarUrl";
+import { useUser } from "@clerk/nextjs";
 
 export default function PortfolioInputChoice() {
+  const router = useRouter();
   const [dragActive, setDragActive] = useState<boolean>(false);
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
+  const [isExtracting, setIsExtracting] = useState<boolean>(false);
+  const {user} = useUser()
+  const dispatch = useAppDispatch();
 
   const handleDrag = (e: DragEvent<HTMLDivElement>): void => {
     e.preventDefault();
@@ -24,10 +36,13 @@ export default function PortfolioInputChoice() {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    
+
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file: File = e.dataTransfer.files[0];
-      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith('.pdf')) {
+      if (
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf")
+      ) {
         setUploadedFile(file);
       } else {
         alert("Please upload a PDF file only.");
@@ -38,7 +53,10 @@ export default function PortfolioInputChoice() {
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>): void => {
     if (e.target.files && e.target.files[0]) {
       const file: File = e.target.files[0];
-      if (file.type === "application/pdf" || file.name.toLowerCase().endsWith('.pdf')) {
+      if (
+        file.type === "application/pdf" ||
+        file.name.toLowerCase().endsWith(".pdf")
+      ) {
         setUploadedFile(file);
       } else {
         alert("Please upload a PDF file only.");
@@ -46,11 +64,54 @@ export default function PortfolioInputChoice() {
     }
   };
 
-  const handleUploadSubmit = (): void => {
+  function extractGithubProfileUrl(links: string[]): string | undefined {
+    return links.find(
+      (link) =>
+        link.startsWith("https://github.com/") &&
+        !link.replace("https://github.com/", "").includes("/")
+    );
+  }
+
+  const handleUploadSubmit = async (): Promise<void> => {
     if (uploadedFile) {
-      // Here you would typically handle the file upload
-      console.log("Uploading file:", uploadedFile);
-      // Navigate to processing page or show success message
+      setIsExtracting(true);
+      try {
+        const pdfData = await extractPDFData(uploadedFile);
+        // console.log(pdfData);
+
+        const base64File = await fileToBase64(uploadedFile);
+        if (base64File) {
+          try {
+            const { data } = await axios.post(
+              "http://localhost:4000/portfolio-details/add-profile-details/api",
+              { file: base64File, userId: user?.id, category: "resume" }
+            );
+            console.log(data);
+            console.log(pdfData);
+            const githubProfileUrl = extractGithubProfileUrl(pdfData.links);
+            let profileImage;
+            if (githubProfileUrl) {
+              profileImage = await getGithubAvatarUrl(githubProfileUrl);
+            }
+            dispatch(
+              fillExtractedResumeDetails({
+                ...pdfData,
+                profileImage,
+                resumeUrl: data.fileURL,
+              })
+            );
+            router.push("/building-portfolio?entryType=upload");
+          } catch (error) {
+            console.error("Error uploading the PDF:", error);
+          }
+        } else {
+          console.error("user name not found or base64File not generated");
+        }
+      } catch (error) {
+        console.error("Error extracting PDF data:", error);
+      } finally {
+        setIsExtracting(false);
+      }
     }
   };
 
@@ -92,7 +153,9 @@ export default function PortfolioInputChoice() {
               <div className="w-16 h-16 bg-cyan-500 bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiUpload className="text-cyan-500 text-2xl" />
               </div>
-              <h2 className="text-xl font-bold text-white mb-2">Upload Resume</h2>
+              <h2 className="text-xl font-bold text-white mb-2">
+                Upload Resume
+              </h2>
               <p className="text-gray-400 text-sm">
                 Let AI extract information from your existing resume
               </p>
@@ -101,8 +164,8 @@ export default function PortfolioInputChoice() {
             {/* File Upload Area */}
             <div
               className={`border-2 border-dashed rounded-xl p-8 text-center transition-all duration-300 ${
-                dragActive 
-                  ? "border-cyan-500 bg-cyan-500 bg-opacity-10" 
+                dragActive
+                  ? "border-cyan-500 bg-cyan-500 bg-opacity-10"
                   : "border-gray-600 hover:border-cyan-500"
               }`}
               onDragEnter={handleDrag}
@@ -119,18 +182,32 @@ export default function PortfolioInputChoice() {
                   </p>
                   <button
                     onClick={handleUploadSubmit}
-                    className="bg-cyan-500 text-white px-6 py-3 rounded-full hover:bg-cyan-600 transition-colors duration-300 font-medium"
+                    disabled={isExtracting}
+                    className={`bg-cyan-500 text-white px-6 py-3 rounded-full font-medium transition-all duration-300 flex items-center justify-center gap-2 mx-auto ${
+                      isExtracting
+                        ? "opacity-75 cursor-not-allowed"
+                        : "hover:bg-cyan-600"
+                    }`}
                     type="button"
                   >
-                    Generate Portfolio
+                    {isExtracting ? (
+                      <>
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                        <span>Extracting...</span>
+                      </>
+                    ) : (
+                      "Generate Portfolio"
+                    )}
                   </button>
-                  <button
-                    onClick={handleRemoveFile}
-                    className="ml-4 text-gray-400 hover:text-white transition-colors duration-300"
-                    type="button"
-                  >
-                    Remove
-                  </button>
+                  {!isExtracting && (
+                    <button
+                      onClick={handleRemoveFile}
+                      className="ml-4 text-gray-400 hover:text-white transition-colors duration-300"
+                      type="button"
+                    >
+                      Remove
+                    </button>
+                  )}
                 </div>
               ) : (
                 <div>
@@ -173,7 +250,9 @@ export default function PortfolioInputChoice() {
               <div className="w-16 h-16 bg-cyan-500 bg-opacity-20 rounded-full flex items-center justify-center mx-auto mb-4">
                 <FiEdit3 className="text-cyan-500 text-2xl" />
               </div>
-              <h2 className="text-xl font-bold text-white mb-2">Manual Entry</h2>
+              <h2 className="text-xl font-bold text-white mb-2">
+                Manual Entry
+              </h2>
               <p className="text-gray-400 text-sm">
                 Fill out your information step by step
               </p>
@@ -196,7 +275,8 @@ export default function PortfolioInputChoice() {
 
             <Link
               href="/portfolio-details/add-profile-details"
-              className="mt-16 w-full font-medium text-center block bg-transparent border border-cyan-500 text-cyan-500 px-6 py-3 rounded-full hover:bg-cyan-600 hover:text-white transition-all duration-300 cursor-pointer">
+              className="mt-16 w-full font-medium text-center block bg-transparent border border-cyan-500 text-cyan-500 px-6 py-3 rounded-full hover:bg-cyan-600 hover:text-white transition-all duration-300 cursor-pointer"
+            >
               Start Manual Entry
             </Link>
           </motion.div>

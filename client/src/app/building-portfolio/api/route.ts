@@ -12,15 +12,21 @@ export async function POST(req: NextRequest){
 
     // user input data
     const userInput = await req.json()
-    console.log("hello")
+    // console.log(userInput)
 
     // ai generated data
     const response = await axios.post("http://localhost:8000/portfolioData",userInput)
     const aiResponse = response.data
     // console.log(aiResponse)
+
+    // get user email
+    const user = await clerkClient.users.getUser(userId!);
+    const email = user.emailAddresses.find((e) => e.id === user.primaryEmailAddressId)?.emailAddress;
+    console.log(email)
     
+    // storing in DB
     await connectToDB()
-    const newUser = await UserPortfolioData.create({username: userInput.profileData.email, portfolio: aiResponse})
+    const newUser = await UserPortfolioData.create({username: email, portfolio: aiResponse})
     
     // Update Clerk session claim
     await clerkClient.users.updateUserMetadata(userId!, {

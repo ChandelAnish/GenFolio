@@ -11,9 +11,14 @@
   "dependencies": {
     "@clerk/clerk-sdk-node": "^4.13.23",
     "@clerk/nextjs": "^6.12.8",
+    "@radix-ui/react-popover": "^1.1.14",
+    "@radix-ui/react-slot": "^1.2.3",
     "@reduxjs/toolkit": "^2.6.1",
     "axios": "^1.8.3",
+    "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.6.0",
+    "clsx": "^2.1.1",
+    "date-fns": "^4.1.0",
     "framer-motion": "^12.4.10",
     "lucide-react": "^0.477.0",
     "mongoose": "^8.12.1",
@@ -21,9 +26,12 @@
     "next-cloudinary": "^6.16.0",
     "pdfjs-dist": "^5.3.31",
     "react": "^19.0.0",
+    "react-day-picker": "^9.8.0",
     "react-dom": "^19.0.0",
     "react-icons": "^5.5.0",
-    "react-redux": "^9.2.0"
+    "react-redux": "^9.2.0",
+    "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

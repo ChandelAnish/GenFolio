@@ -2,6 +2,11 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { CalendarIcon } from "lucide-react";
+import { format } from "date-fns";
 import { Experience } from "@/types";
 
 interface ExperienceFormProps {
@@ -19,6 +24,34 @@ export default function ExperienceForm({
   onCancel,
   editMode,
 }: ExperienceFormProps) {
+  // Parse existing duration to extract dates if possible
+  const parseDurationToDates = (duration: string): { from?: Date; to?: Date } => {
+    if (!duration) return {};
+    
+    // Try to parse format like "2 Sep 2024 - 2 Dec 2024" or "2 Sep 2024 - Present"
+    const parts = duration.split(' - ');
+    if (parts.length !== 2) return {};
+    
+    try {
+      const fromDateStr = parts[0].trim();
+      const toDateStr = parts[1].trim();
+      
+      const fromDate = new Date(fromDateStr);
+      const toDate = toDateStr === 'Present' ? undefined : new Date(toDateStr);
+      
+      return {
+        from: isNaN(fromDate.getTime()) ? undefined : fromDate,
+        to: toDate && isNaN(toDate.getTime()) ? undefined : toDate
+      };
+    } catch {
+      return {};
+    }
+  };
+
+  const initialDates = parseDurationToDates(experience.duration);
+  const [fromDate, setFromDate] = React.useState<Date | undefined>(initialDates.from);
+  const [toDate, setToDate] = React.useState<Date | undefined>(initialDates.to);
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -27,6 +60,29 @@ export default function ExperienceForm({
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleFromDateChange = (date: Date | undefined) => {
+    setFromDate(date);
+    setExperience((prev) => ({
+      ...prev,
+      duration: formatDuration(date, toDate),
+    }));
+  };
+
+  const handleToDateChange = (date: Date | undefined) => {
+    setToDate(date);
+    setExperience((prev) => ({
+      ...prev,
+      duration: formatDuration(fromDate, date),
+    }));
+  };
+
+  const formatDuration = (from: Date | undefined, to: Date | undefined): string => {
+    if (!from && !to) return "";
+    if (!from) return to ? format(to, "d MMM yyyy") : "";
+    if (!to) return format(from, "d MMM yyyy") + " - Present";
+    return `${format(from, "d MMM yyyy")} - ${format(to, "d MMM yyyy")}`;
   };
 
   const handleHighlightChange = (index: number, value: string) => {
@@ -111,18 +167,59 @@ export default function ExperienceForm({
               </div>
             </div>
 
-            <div className="mb-3">
-              <label className="font-semibold block text-sm text-gray-300 mb-1">
-                Duration (e.g., &quot;Sep 2024 - Dec 2024&quot;)
-              </label>
-              <input
-                type="text"
-                name="duration"
-                value={experience.duration}
-                onChange={handleInputChange}
-                className="w-full bg-gray-600/20 p-[10px] text-sm border-[1px] border-gray-700 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 text-white"
-                required
-              />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-3">
+              <div>
+                <label className="font-semibold block text-sm text-gray-300 mb-1">
+                  Start Date
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal bg-gray-600/20 border-gray-700 text-white hover:bg-gray-600/30 hover:text-white focus:ring-cyan-500 focus:border-cyan-500"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {fromDate ? format(fromDate, "d MMM yyyy") : "Select start date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700">
+                    <Calendar
+                      mode="single"
+                      selected={fromDate}
+                      onSelect={handleFromDateChange}
+                      initialFocus
+                      className="bg-gray-800 text-white"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+
+              <div>
+                <label className="font-semibold block text-sm text-gray-300 mb-1">
+                  End Date
+                </label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className="w-full justify-start text-left font-normal bg-gray-600/20 border-gray-700 text-white hover:bg-gray-600/30 hover:text-white focus:ring-cyan-500 focus:border-cyan-500"
+                    >
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {toDate ? format(toDate, "d MMM yyyy") : "Select end date (optional)"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0 bg-gray-800 border-gray-700">
+                    <Calendar
+                      mode="single"
+                      selected={toDate}
+                      onSelect={handleToDateChange}
+                      initialFocus
+                      disabled={(date) => fromDate ? date < fromDate : false}
+                      className="bg-gray-800 text-white"
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
             </div>
 
             <div className="mb-2">
@@ -165,7 +262,7 @@ export default function ExperienceForm({
                 >
                   <input
                     type="text"
-                    required= {index === 0}
+                    required={index === 0}
                     value={highlight}
                     onChange={(e) =>
                       handleHighlightChange(index, e.target.value)
