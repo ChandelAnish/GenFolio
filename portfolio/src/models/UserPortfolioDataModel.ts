@@ -5,7 +5,13 @@ import { PortfolioSchema } from "./portfolioSchema";
 const UserPortfolioDataSchema = new Schema({
   username: { type: String, required: true, unique: true },
   preferences: {
-    theme: { type: String, default: "default" },
+    portfolio: {
+      theme: { type: String, default: "default" },
+    },
+    resume: {
+      theme: { type: String, default: "default" },
+      fontStyle: { type: String, default: "default" },
+    },
   },
   portfolio: { type: PortfolioSchema },
 });

@@ -50,7 +50,7 @@ export default function DashboardPage() {
   useEffect(() => {
     setUsername(user?.primaryEmailAddress?.emailAddress);
     setPortfolioUrl(
-      `http://localhost:3000/portfolio/${user?.primaryEmailAddress?.emailAddress}`
+      `${process.env.NEXT_PUBLIC_BASE_URL}/portfolio/${user?.primaryEmailAddress?.emailAddress}`
     );
   }, [user]);
 
@@ -65,7 +65,7 @@ export default function DashboardPage() {
   };
 
   const handleEditPortfolio = () => {
-    window.location.href = `http://localhost:3000/portfolio/${user?.primaryEmailAddress?.emailAddress}/edit`;
+    window.location.href = `${process.env.NEXT_PUBLIC_BASE_URL}/portfolio/${user?.primaryEmailAddress?.emailAddress}/edit`;
   };
 
   const currentTheme = themes.find((theme) => theme.id === selectedTheme);

@@ -5,6 +5,7 @@ import projectsSliceReducer from './projects'
 import toolsAndTechnologiesSliceReducer from './toolsAndTechnologies'
 import connectSliceReducer from './connect'
 import themeSliceReducer from './theme'
+import resumeSliceReducer from './resumeSlice'
 
 export const store = configureStore({
   reducer: {
@@ -14,6 +15,7 @@ export const store = configureStore({
     toolsAndTechnologies: toolsAndTechnologiesSliceReducer,
     connect: connectSliceReducer,
     theme: themeSliceReducer,
+    resume: resumeSliceReducer
   }
 })
 

@@ -3,10 +3,43 @@
 import { useState, useEffect, useRef } from "react";
 import { PaintBucket, Check } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setTheme } from "@/store/theme";
+import { setSelectedTheme, setFontStyle } from "@/store/resumeSlice";
+import { RootState } from "@/store/store";
 import { ThemeOption } from "@/types";
 import axios from "axios";
+import {
+  Inter,
+  Roboto,
+  Lato,
+  Open_Sans,
+  Montserrat,
+  Playfair_Display,
+  Crimson_Text,
+  Merriweather,
+  PT_Serif,
+} from "next/font/google";
+
+// Initialize Google Fonts
+const inter = Inter({ subsets: ["latin"] });
+const roboto = Roboto({
+  weight: ["300", "400", "500", "700"],
+  subsets: ["latin"],
+});
+const lato = Lato({ weight: ["300", "400", "700"], subsets: ["latin"] });
+const openSans = Open_Sans({ subsets: ["latin"] });
+const montserrat = Montserrat({ subsets: ["latin"] });
+const playfair = Playfair_Display({ subsets: ["latin"] });
+const crimsonText = Crimson_Text({
+  weight: ["400", "600"],
+  subsets: ["latin"],
+});
+const merriweather = Merriweather({
+  weight: ["300", "400", "700"],
+  subsets: ["latin"],
+});
+const ptSerif = PT_Serif({ weight: ["400", "700"], subsets: ["latin"] });
 
 export const themes: ThemeOption[] = [
   {
@@ -515,19 +548,57 @@ export const themes: ThemeOption[] = [
   },
 ];
 
-const ThemeSelector = ({username}: {username: string}) => {
+// Resume themes
+const resumeThemes = [
+  { id: "default", name: "Professional" },
+  { id: "modern", name: "Modern" },
+  { id: "creative", name: "Creative" },
+  { id: "minimal", name: "Minimal" },
+];
+
+// Font styles
+const fontStyles = [
+  { id: "default", name: "Default", font: inter },
+  { id: "roboto", name: "Roboto", font: roboto },
+  { id: "lato", name: "Lato", font: lato },
+  { id: "openSans", name: "Open Sans", font: openSans },
+  { id: "montserrat", name: "Montserrat", font: montserrat },
+  { id: "playfair", name: "Playfair Display", font: playfair },
+  { id: "crimsonText", name: "Crimson Text", font: crimsonText },
+  { id: "merriweather", name: "Merriweather", font: merriweather },
+  { id: "ptSerif", name: "PT Serif", font: ptSerif },
+];
+
+interface ThemeSelectorProps {
+  username: string;
+  variant?: "portfolio" | "resume";
+}
+
+const ThemeSelector: React.FC<ThemeSelectorProps> = ({
+  username,
+  variant = "portfolio",
+}) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedTheme, setSelectedTheme] = useState("default");
+  const [selectedTheme, setSelectedThemeLocal] = useState("default");
   const modalRef = useRef<HTMLDivElement>(null);
   const dispatch = useDispatch();
 
-  const savePreferences = async(theme: string) => {
+  // Get current resume theme and font from Redux
+  const resumeTheme = useSelector(
+    (state: RootState) => state.resume.selectedTheme
+  );
+  const fontStyle = useSelector((state: RootState) => state.resume.fontStyle);
+
+  const savePreferences = async (theme: string, fontStyle?: string) => {
     try {
-      const {data} = await axios.patch(
-        `http://localhost:3000/api/${username}/save-preferences`,
-        {
-          theme,
-        }
+      const payload =
+        variant === "resume"
+          ? { theme, fontStyle, variant }
+          : { theme, variant };
+
+      const { data } = await axios.patch(
+        `${process.env.NEXT_PUBLIC_BASE_URL}/api/${username}/save-preferences`,
+        payload
       );
       console.log(data);
     } catch (error) {
@@ -535,9 +606,9 @@ const ThemeSelector = ({username}: {username: string}) => {
     }
   };
 
-  // Apply theme change
-  const applyTheme = async (themeId: string) => {
-    setSelectedTheme(themeId);
+  // Apply theme change for portfolio
+  const applyPortfolioTheme = async (themeId: string) => {
+    setSelectedThemeLocal(themeId);
 
     // Find the selected theme
     const theme = themes.find((t) => t.id === themeId);
@@ -547,11 +618,23 @@ const ThemeSelector = ({username}: {username: string}) => {
     // Dispatch the theme change
     dispatch(setTheme(theme.theme));
 
-    // Save Preferences in DB
-    await savePreferences(themeId)
-
     // Close the modal after selection
     setTimeout(() => setIsOpen(false), 300);
+
+    // Save Preferences in DB
+    await savePreferences(themeId);
+  };
+
+  // Apply theme change for resume
+  const applyResumeTheme = async (themeId: string) => {
+    dispatch(setSelectedTheme(themeId));
+    await savePreferences(themeId, fontStyle);
+  };
+
+  // Apply font change for resume
+  const applyFontStyle = async (fontId: string) => {
+    dispatch(setFontStyle(fontId));
+    await savePreferences(resumeTheme, fontId);
   };
 
   // Close modal when clicking outside
@@ -574,7 +657,7 @@ const ThemeSelector = ({username}: {username: string}) => {
 
   return (
     <>
-      {/* Toggle Button - Now positioned at the bottom */}
+      {/* Toggle Button */}
       <button
         id="theme-toggle-button"
         onClick={() => setIsOpen(!isOpen)}
@@ -587,68 +670,150 @@ const ThemeSelector = ({username}: {username: string}) => {
       {/* Theme Selector Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-end z-40">
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-end z-50">
             <motion.div
               ref={modalRef}
               initial={{ x: "100%", opacity: 0.5 }}
               animate={{ x: 0, opacity: 1 }}
               exit={{ x: "100%", opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="bg-gray-900/85 rounded-xl shadow-xl w-full sm:w-96 md:w-96 max-h-[60vh] h-auto mr-9"
+              className="bg-gray-900/85 rounded-xl shadow-xl w-full sm:w-96 md:w-96 max-h-[70vh] h-auto mr-9"
             >
               <div className="p-5">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-md font-semibold text-gray-300">
-                    SELECT THEME
-                  </h2>
-                </div>
+                {variant === "portfolio" ? (
+                  <>
+                    <div className="flex items-center justify-between mb-6">
+                      <h2 className="text-md font-semibold text-gray-300">
+                        SELECT THEME
+                      </h2>
+                    </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  {themes.map((theme) => (
-                    <div
-                      key={theme.id}
-                      onClick={() => applyTheme(theme.id)}
-                      className={`
-                        relative p-3 rounded-lg cursor-pointer transition-all duration-200
-                        ${
-                          selectedTheme === theme.id
-                            ? "bg-gray-800 ring-2"
-                            : "bg-gray-800/50 hover:bg-gray-800"
-                        }
-                        ${
-                          selectedTheme === theme.id
-                            ? `ring-${
-                                theme.id === "default" ? "cyan" : theme.id
-                              }-400`
-                            : ""
-                        }
-                      `}
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="font-medium text-white text-sm">
-                          {theme.name}
-                        </h3>
-                        {selectedTheme === theme.id && (
-                          <div
-                            className="w-4 h-4 rounded-full flex items-center justify-center"
-                            style={{ backgroundColor: theme.primaryColor }}
-                          >
-                            <Check size={12} className="text-black" />
+                    <div className="grid grid-cols-2 gap-3">
+                      {themes.map((theme) => (
+                        <div
+                          key={theme.id}
+                          onClick={() => applyPortfolioTheme(theme.id)}
+                          className={`
+                            relative p-3 rounded-lg cursor-pointer transition-all duration-200
+                            ${
+                              selectedTheme === theme.id
+                                ? "bg-gray-800 ring-2"
+                                : "bg-gray-800/50 hover:bg-gray-800"
+                            }
+                            ${
+                              selectedTheme === theme.id
+                                ? `ring-${
+                                    theme.id === "default" ? "cyan" : theme.id
+                                  }-400`
+                                : ""
+                            }
+                          `}
+                        >
+                          <div className="flex items-center justify-between mb-2">
+                            <h3 className="font-medium text-white text-sm">
+                              {theme.name}
+                            </h3>
+                            {selectedTheme === theme.id && (
+                              <div
+                                className="w-4 h-4 rounded-full flex items-center justify-center"
+                                style={{ backgroundColor: theme.primaryColor }}
+                              >
+                                <Check size={12} className="text-black" />
+                              </div>
+                            )}
                           </div>
-                        )}
+                          <div className="flex space-x-1">
+                            {theme.previewColors.map((color, idx) => (
+                              <div
+                                key={idx}
+                                className="w-5 h-5 rounded-full"
+                                style={{ backgroundColor: color }}
+                              />
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    {/* Resume Themes Section */}
+                    <div className="mb-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-md font-semibold text-gray-300">
+                          RESUME THEMES
+                        </h2>
                       </div>
-                      <div className="flex space-x-1">
-                        {theme.previewColors.map((color, idx) => (
+
+                      <div className="grid grid-cols-2 gap-3">
+                        {resumeThemes.map((theme) => (
                           <div
-                            key={idx}
-                            className="w-5 h-5 rounded-full"
-                            style={{ backgroundColor: color }}
-                          />
+                            key={theme.id}
+                            onClick={() => applyResumeTheme(theme.id)}
+                            className={`
+                              relative p-3 rounded-lg cursor-pointer transition-all duration-200
+                              ${
+                                resumeTheme === theme.id
+                                  ? "bg-gray-700 ring-2 ring-cyan-400"
+                                  : "bg-gray-700/35 hover:bg-gray-700"
+                              }
+                            `}
+                          >
+                            <div className="flex items-center justify-between">
+                              <h3 className="font-medium text-white text-sm">
+                                {theme.name}
+                              </h3>
+                              {resumeTheme === theme.id && (
+                                <div className="w-4 h-4 rounded-full bg-cyan-400 flex items-center justify-center">
+                                  <Check size={12} className="text-black" />
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         ))}
                       </div>
                     </div>
-                  ))}
-                </div>
+
+                    {/* Font Styles Section */}
+                    <div className="border-t border-gray-700 pt-4">
+                      <div className="flex items-center justify-between mb-4">
+                        <h2 className="text-md font-semibold text-gray-300">
+                          FONT STYLES
+                        </h2>
+                      </div>
+
+                      <div className="grid grid-cols-1 gap-2 max-h-48 p-2 overflow-y-scroll scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-transparent">
+                        {fontStyles.map((font) => (
+                          <div
+                            key={font.id}
+                            onClick={() => applyFontStyle(font.id)}
+                            className={`
+                              relative p-3 rounded-lg cursor-pointer transition-all duration-200
+                              ${
+                                fontStyle === font.id
+                                  ? "bg-gray-700 ring-2 ring-cyan-400"
+                                  : "bg-gray-700/35 hover:bg-gray-700"
+                              }
+                            `}
+                          >
+                            <div className="flex items-center justify-between">
+                              <h3
+                                className={`font-medium text-white text-sm ${font.font.className}`}
+                              >
+                                {font.name}
+                              </h3>
+                              {fontStyle === font.id && (
+                                <div className="w-4 h-4 rounded-full bg-cyan-400 flex items-center justify-center">
+                                  <Check size={12} className="text-black" />
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
             </motion.div>
           </div>

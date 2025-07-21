@@ -152,8 +152,11 @@ const Hero = () => {
               </div>
 
               {/* CTA Button */}
-              <button className={`${heroTheme.accentBackground} ${heroTheme.buttonText} font-medium py-2 px-6 rounded-full ${heroTheme.accentButtonHover} transition-colors text-sm sm:text-base`}>
-                Download CV
+              <button 
+                onClick={()=>introduction.resumeUrl? window.location.href=introduction.resumeUrl:null}
+                className={`${heroTheme.accentBackground} ${heroTheme.buttonText} font-medium py-2 px-6 rounded-full ${heroTheme.accentButtonHover} transition-colors text-sm sm:text-base`}
+                >
+                Resume
               </button>
             </div>
 

@@ -9,6 +9,7 @@ const initialState: Introduction = {
   about:
     "",
   profileImage: "/defaultUserImage.png",
+  resumeUrl: "",
 }
 
 export const introductionSlice = createSlice({

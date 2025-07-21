@@ -5,13 +5,13 @@ from langchain_core.output_parsers import JsonOutputParser
 from langchain_core.prompts import PromptTemplate
 from typing import List
 import json
-from ..schemas import PortfolioData, RequestProfileData
+from ..schemas import PortfolioData, RequestProfileData, ExtractedResumeData
 from langchain_google_genai import ChatGoogleGenerativeAI
 
 load_dotenv()
 
 google_llm = ChatGoogleGenerativeAI(
-    model="gemini-2.0-flash-001",
+    model="gemini-2.0-flash-0011",
     temperature=0.2,
     max_tokens=None,
     timeout=None,
@@ -28,14 +28,14 @@ google_llm = ChatGoogleGenerativeAI(
 # )
 
 llama70_llm = ChatGroq(
-    model="llama-3.3-70b-versatile", # 32,768 token
+    model="llama-3.3-70b-versatile",  # 32,768 token
     temperature=0.2,
     max_tokens=4096,
     timeout=60,
     max_retries=2,
 )
 gemma2_llm = ChatGroq(
-    model="gemma2-9b-it",# 8,192 token
+    model="gemma2-9b-it",  # 8,192 token
     temperature=0.2,
     max_tokens=4096,
     timeout=60,
@@ -60,8 +60,12 @@ llm_models = [
     ("gemma2_llm", gemma2_llm),
 ]
 
-async def portfolioDataGenerator(requestPortfolioData: RequestProfileData):
-    query = f"""
+
+async def portfolioDataGenerator(
+    requestPortfolioData: RequestProfileData | ExtractedResumeData,
+):
+    query = (
+        f"""
 Generate a JSON response strictly following this Pydantic schema.
 
 1. Improve all descriptions with powerful language, strong action verbs, and professional tone.
@@ -76,7 +80,65 @@ Here is the input data:
 {requestPortfolioData}
 
 """
-    
+        if requestPortfolioData.__class__.__name__ == "RequestProfileData"
+        else f"""
+**Instructions:**
+1. Analyze the extracted resume data to create a comprehensive portfolio JSON object
+2. Use powerful language, strong action verbs, and professional tone
+3. Fix any spelling or grammatical errors
+4. Maintain exact JSON structure - do not add or remove keys
+
+**Key Requirements:**
+- Each technology in 'toolsAndTechnologies' must have "name" and "icon" keys with correct react-icons component names
+- Use the provided profileImage URL directly from requestPortfolioData
+- Use the provided resumeUrl directly from requestPortfolioData
+- Extract GitHub/LinkedIn usernames from links array and construct full URLs for connect section
+
+**Data Extraction:**
+
+**Introduction:**
+- Extract name from resume text
+- Derive designation from skills/experience
+- Create compelling "about" section (2-3 sentences)
+- Use provided profileImage and resumeUrl
+
+**Experiences:**
+- Extract all work experience/internships
+- Transform descriptions with action verbs and quantifiable results
+- Create 2-3 highlight points per experience with metrics
+- Assign sequential IDs starting from 1
+
+**Projects:**
+- Extract all projects from resume text
+- Create engaging descriptions highlighting technical complexity
+- Map technologies to objects with "name" key only (no icon needed in projects)
+- Match project links from links array to project names
+
+**ToolsAndTechnologies:**
+- Extract all technical skills from resume
+- Create objects with "name" and "icon" keys
+- Use correct react-icons names (SiReact, SiNodedotjs, SiMongodb, etc.)
+
+**Connect:**
+- Set msg1: "Let's build something amazing together!"
+- Extract GitHub username from links and create full URL
+- Extract LinkedIn username from links and create full URL  
+- Extract email from links array
+- Set msg2: "Feel free to reach out for collaborations, freelance work, or just a tech chat."
+
+**Input Data Structure:**
+- `text`: Resume content
+- `links`: Array of URLs (email, LinkedIn, GitHub, projects)
+- `phoneNumbers`: Phone numbers array
+- `metadata`: File information
+- `profileImage`: Profile image URL
+- `resumeUrl`: Resume PDF URL
+
+Here is the input data:
+{requestPortfolioData}
+"""
+    )
+
     # Try each LLM in order until one succeeds
     last_exception = None
     for model_name, model in llm_models:
@@ -90,12 +152,12 @@ Here is the input data:
             print(f"Error with {model_name}: {e}")
             last_exception = e
             continue
-    
+
     # If all LLMs fail, raise the last exception
     if last_exception:
         print("All LLM models failed")
         raise last_exception
-    
+
     return None
 
 

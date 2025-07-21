@@ -34,15 +34,15 @@ export default function ActionDispatchWrapper({
       try {
         console.log("fetching data");
         setLoading(true);
-        const { data }: { data: {username: string, preferences:{theme: string} ,portfolio: PortfolioData} | { error: string } } =
-          await axios.get(`http://localhost:3000/api/${username}`);
+        const { data }: { data: {username: string, preferences:{portfolio: {theme: string}} ,portfolio: PortfolioData} | { error: string } } =
+          await axios.get(`${process.env.NEXT_PUBLIC_BASE_URL}/api/${username}`);
 
         if ("error" in data) {
           setError(data.error);
           console.error("API Error:", data.error);
         } else {
           setPortfolioData(data.portfolio);
-                    const preferredTheme = themes.find((t) => t.id === data.preferences.theme);
+          const preferredTheme = themes.find((t) => t.id === data.preferences.portfolio.theme);
           if(preferredTheme?.theme){
             dispatch(setTheme(preferredTheme?.theme));
           }
@@ -98,7 +98,7 @@ export default function ActionDispatchWrapper({
       console.log("Response from ai server:", aiResponse.data);
       try {
         const dbResponse = await axios.patch(
-          `http://localhost:3000/api/${username}`,
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/${username}`,
           {
             newPortfolioData,
           }

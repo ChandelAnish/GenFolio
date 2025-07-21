@@ -4,7 +4,8 @@ const IntroductionSchema = new Schema({
   name: { type: String, required: true },
   designation: { type: String, required: true },
   about: { type: String, required: true },
-  profileImage: { type: String, required: true }
+  profileImage: { type: String, required: true },
+  resumeUrl: {type: String}
 });
 
 const ExperienceSchema = new Schema({

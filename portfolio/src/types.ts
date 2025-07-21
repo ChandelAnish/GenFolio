@@ -5,6 +5,7 @@ export interface Introduction {
   profileImage: string;
   resume?:string,
   visitorCount?:number;
+  resumeUrl?: string
 }
 
 export interface Experience {

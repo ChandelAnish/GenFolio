@@ -40,13 +40,28 @@ class RequestProfileData(BaseModel):
 class RequestSkill(BaseModel):
     id: str
     name: str
-    category: str  # "frontend" | "backend" | "database" | "devops" | "mobile" | "other"
+    category: str
 
 class RequestPortfolioDetails(BaseModel):
   profileData: RequestProfileData
   experience: List[RequestExperience]
   projects: List[RequestProject]
   skills: List[RequestSkill]
+
+
+# extracted resume data
+class Metadata(BaseModel):
+    fileName: str
+    fileSize: int 
+    fileType: str
+
+class ExtractedResumeData(BaseModel):
+    text: str
+    links: List[str]
+    phoneNumbers: List[str]
+    metadata: Metadata
+    profileImage: str
+    resumeUrl: str
 
 
 
@@ -58,6 +73,7 @@ class Introduction(BaseModel):
     designation: str
     about: str
     profileImage: str
+    resumeUrl: str
 
 class Experience(BaseModel):
     id: int
