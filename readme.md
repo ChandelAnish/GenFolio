@@ -3,7 +3,7 @@
   <p><em>Generate stunning portfolios with AI-powered simplicity</em></p>
   
   <p>
-    <a href="#features">Features</a> 
+    <a href="#features">Features</a> •
     <a href="#demo">Demo</a> •
     <a href="#installation">Installation</a> •
     <a href="#usage">Usage</a> •
