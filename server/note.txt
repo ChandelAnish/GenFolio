@@ -198,12 +198,63 @@ But if you're not building a library or package (just writing scripts or a FastA
 
 
 
+🧠 What is PEP 621?
+Think of PEP 621 as a universal rulebook that says:
+
+"Here’s the standard way to describe a Python project (its name, version, dependencies, etc.) in pyproject.toml — so all Python tools (like pip, build, flit, etc.) can understand it."
+
+It uses the [project] section like this:
+
+        [project]
+        name = "myapp"
+        version = "0.1.0"
+        dependencies = [
+        "sqlmodel"
+        ]
+✅ Good for standardization
+❌ But limited — It does not support Poetry-only features like package-mode = false.
+
+
+🛠 What is the Poetry-specific section?
+Poetry has its own section called: [tool.poetry]
+
+This is where Poetry puts its extra features — like:
+                - package-mode = false
+                - [tool.poetry.dependencies]
+                - [tool.poetry.scripts]
+
+Think of it as: “Poetry's personal control panel.”
+
+📦 Why do you need the Poetry section?
+                - Because if you want to use Poetry-specific features (like turning off packaging), you must use [tool.poetry].
+                - The [project] section (from PEP 621) is standard, but it doesn’t know about Poetry's extra options.
+
+🎯 Simple Analogy
+Thing	                        Like...
+[project] (PEP 621)	        A general form used by everyone
+[tool.poetry]	                A custom Poetry-only form with bonuses
+
+If you want the extra features Poetry gives, like:
+        - package-mode = false
+        - poetry add working smoothly
+        - Project not treated like a package
+
+👉 You need [tool.poetry]
+
+✅ Summary
+Feature	[project]                             (PEP 621)	              [tool.poetry]
+Standard across Python tools	                ✅ Yes	                ❌ No
+Works with Poetry features	                ❌ No	                ✅ Yes
+Supports package-mode = false	                ❌ No	                ✅ Yes
+Best for apps/scripts with no packaging	        ❌ Limited	        ✅ Recommended
+----------------
+
 
 
 
 File/Folder                                     Keep in Git?                Why                                                       
 --------------------------------                ------------                --------------------------------------------------------- 
-`pyproject.toml`                                ✅ Yes                      This is like `package.json` — defines your project & deps 
-`poetry.lock`                                   ✅ Yes                      Ensures consistent dependency versions across machines    
-`.venv/`                                        ❌ No                       Virtual environment — machine-specific and large          
-`.python-version` *(if present)*                ❌ Optional                 If you use `pyenv`, ignore this unless team needs it      
+pyproject.toml`                                ✅ Yes                      This is like `package.json` — defines your project & deps 
+poetry.lock`                                   ✅ Yes                      Ensures consistent dependency versions across machines    
+.venv/`                                        ❌ No                       Virtual environment — machine-specific and large          
+.python-version` *(if present)*                ❌ Optional                 If you use `pyenv`, ignore this unless team needs it      
