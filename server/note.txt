@@ -12,3 +12,198 @@ return {updatedHeroData} // updatedHeroData is python dict
         Model capacity (like 32,768 for llama-3.3-70b-versatile) = max total tokens for input + output.
 
 max_tokens=4096 = you're allowing the model to generate up to 4096 output tokens, even if it could generate more.
+---------
+
+pip freeze -> outputs a list of all installed Python packages in your current environment along with their versions
+pip freeze > requirements.txt -> saves the list of all installed Python packages in the requirements.txt
+
+
+
+
+
+---------
+POETRY:
+
+poetry new hello -> will generate a new basic Python project called hello with a ready-to-use folder structure and files.
+
+hello/                   ← project root
+├── hello/
+│   └── __init__.py      ← Python package, same name as project (your code goes here)
+├── tests/
+│   └── __init__.py      ← Test folder (empty, ready for unit tests)
+├── pyproject.toml       ← Like package.json (defines dependencies & project info)
+└── README.rst           ← A basic README file
+
+
+IMPORTANT COMMANDS:
+
+Add Poetry to an Existing Python Project:
+
+        poetry init :   - Ask you questions about project name, version, dependencies, etc.
+                        - You can press Enter to accept defaults.
+                        - At the end, it will generate a pyproject.toml file.
+
+                poetry init --no-interaction : skip questions and generate directly
+
+
+Install dependencies:
+
+        poetry add $(pip freeze) : If you already have a requirements.txt file
+        poetry add fastapi uvicorn : add dependencies manually
+        poetry add --dev black pytest : For dev dependencies (e.g., black, pytest)
+
+        What does poetry add fastapi uvicorn do?
+                - Add fastapi and uvicorn as dependencies to your project
+                - Automatically install them into your virtual environment
+                - Update pyproject.toml with the packages under [tool.poetry.dependencies]
+                - Update poetry.lock to lock the exact versions
+
+        Poetry creates and manages a virtual environment automatically, but it stores it outside your project folder by default — in a centralized location.
+                - Poetry creates the virtual environment in: C:\Users\<YourUsername>\AppData\Local\pypoetry\Cache\virtualenvs\
+                - Each environment is named like: projectname-<random-hash>
+                - Example: C:\Users\chand\AppData\Local\pypoetry\Cache\virtualenvs\genfolio-server-KF92Ddlm-py3.11\
+        
+        How to check the exact path?
+                Run this command inside your project directory: poetry env info --path
+        
+        If you want the virtual environment to be created inside your project directory (like .venv/), run: poetry config virtualenvs.in-project true
+
+
+Command to Remove Poetry Virtual Environment:
+
+        poetry env remove python : This removes the virtual environment associated with your current project.
+
+
+ To "enter" (activate) the virtual environment : 
+
+        poetry shell :  - This opens a shell inside the virtual environment. You’ll see your prompt change like: (server-MEZzi639-py3.13) PS C:\Users\chand\Desktop\server>
+                        - Now any Python or pip commands will use the Poetry environment.
+
+
+get detailed environment info : poetry env info
+
+
+You can check available environments using: poetry env list
+
+ 
+Deactivate the Virtual Environment : exit
+
+
+
+
+** poetry update : It updates your installed dependencies to the latest versions allowed by your pyproject.toml version rules.
+** poetry lock : This regenerates the poetry.lock file based on your current pyproject.toml.
+
+
+✅ Recommended: Use poetry add fastapi
+
+poetry add fastapi does 3 things:
+        - Installs fastapi in the current Poetry-managed virtual environment ✅
+        - Adds it to your pyproject.toml under [tool.poetry.dependencies] ✅
+        - Locks it in poetry.lock to ensure consistent installs across environments ✅
+
+⚠️ What happens if you use pip install fastapi?
+
+        poetry shell
+        pip install fastapi
+                - It does install FastAPI inside the virtual environment ✅
+                - ❌ But it does NOT update your pyproject.toml or poetry.lock
+                - So your dependency tracking becomes incomplete and harder to reproduce
+
+
+**** Always use poetry add, even inside the poetry shell. It keeps your project clean, trackable, and easy to reinstall.
+
+
+
+Command to install all dependencies : 
+                poetry install : - If you already have a pyproject.toml file in your project (created by Poetry), you can install all the dependencies listed using this command.
+                                 - ✅ This will install all dependencies exactly as listed in the new lock file.
+----------------
+
+
+
+
+
+
+
+✅ What is Package Mode in Poetry?
+📦 Package Mode = ON (default)
+Poetry treats your project like a real Python package — something you could publish or reuse elsewhere.
+
+- It expects: pyproject.toml with:
+                - name
+                - version
+                - readme
+
+- A package folder (like my_project/)
+- Your code to be installable via import my_project
+
+🔁 Think of it like you're building your own version of pandas, sqlmodel, or numpy.
+
+
+
+💡 Package Mode = OFF
+Poetry only installs dependencies, and does not treat your code as a package.
+
+        - Your code won't be installed into the virtual environment
+        - You can still run your scripts like python main.py
+        - You don't need to write a README.md or make your project "publishable"
+
+🛠 This is perfect for:
+
+        - FastAPI apps
+        - Scripts
+        - Small internal tools
+
+
+✅ Summary Table
+Feature	                                Package Mode ON	                        Package Mode OFF (package-mode = false)
+Installs your project as a package	✅ Yes	                                ❌ No
+Requires README.md, name, etc	        ✅ Yes	                                ❌ No
+Use import my_project	                ✅ Yes	                                ❌ No (use relative imports)
+Good for building libraries             ✅ Yes	                                ❌ Not needed
+Good for apps/scripts	                ⚠️ Overkill	                         ✅ Yes
+Command	                                poetry install	                          poetry install or poetry install --no-root
+
+🛠️ How to Turn Package Mode OFF
+In your pyproject.toml, set:
+
+[tool.poetry]
+name = "myapp"
+version = "0.1.0"
+package-mode = false
+
+Now Poetry won’t expect a README, won't install your project as a package, and just installs dependencies.
+
+
+
+
+
+✅ What is --no-root in Poetry?
+
+--no-root tells Poetry: “Don’t install my own project as a package — just install the dependencies listed in pyproject.toml.”
+
+
+When you run: poetry install
+
+Poetry does two things:
+
+- Installs the dependencies from pyproject.toml
+- Installs your own project as a package (called the "root" package)
+
+But if you're not building a library or package (just writing scripts or a FastAPI app), installing your own project isn’t needed. So you can skip it with: poetry install --no-root
+---------------
+
+
+
+
+
+
+
+
+File/Folder                                     Keep in Git?                Why                                                       
+--------------------------------                ------------                --------------------------------------------------------- 
+`pyproject.toml`                                ✅ Yes                      This is like `package.json` — defines your project & deps 
+`poetry.lock`                                   ✅ Yes                      Ensures consistent dependency versions across machines    
+`.venv/`                                        ❌ No                       Virtual environment — machine-specific and large          
+`.python-version` *(if present)*                ❌ Optional                 If you use `pyenv`, ignore this unless team needs it      
