@@ -37,4 +37,4 @@ GOOGLE_API_KEY=your-google-api-key-here
 
 - Never commit your actual `.env` file to Git.
 - Make sure to add `.env` to `.gitignore` to avoid exposing secrets.
-- For deployment, set these values in the platform's environment settings (e.g., Vercel, Render, Railway, etc.)...
+- For deployment, set these values in the platform's environment settings (e.g., Vercel, Render, Railway, etc.)
