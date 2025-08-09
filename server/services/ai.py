@@ -55,7 +55,7 @@ prompt = PromptTemplate(
 
 # List of LLMs in order of preference (primary -> fallback)
 llm_models = [
-    ("google_llm", google_llm),
+    # ("google_llm", google_llm),
     ("llama70_llm", llama70_llm),
     ("gemma2_llm", gemma2_llm),
 ]
