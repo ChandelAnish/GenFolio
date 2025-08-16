@@ -207,3 +207,245 @@ export async function GET(
 params is passed separately from req as the second argument.
 
 You should use decodeURIComponent() to safely decode values like emails.
+----------------
+
+
+
+
+
+What is savePDF?
+        - savePDF is a KendoReact helper that takes a DOM element and downloads it as a PDF. It’s a convenience wrapper around Kendo’s “Drawing” + “PDF export” pipeline. 
+
+How does it work (high-level)?
+         - It looks at the live DOM node you pass (your resumeRef.current) and reads its computed CSS.
+         - It converts that DOM into a vector drawing scene (shapes + text) using drawDOM.
+         - It then exports that scene to a PDF and triggers a download with your options (paper size, margins, filename, etc.). 
+
+
+In other words, it’s client-side “DOM → PDF,” not a server HTML-to-PDF engine.
+
+
+Does it “convert HTML to PDF”?
+        -  Yes—the rendered HTML (the DOM) of the element you pass is what gets converted to PDF. It’s not parsing raw HTML strings; it’s taking what’s already on the page and turning it into PDF.
+
+
+
+Is the text in the PDF selectable?
+        - Generally yes. Normal text nodes become real text in the PDF (so you can select/search).
+
+Exceptions:
+
+        - Things like images, canvas, and inline SVG are exported as images inside the PDF, so those parts won’t be selectable text.
+        - If you use characters outside ASCII, you may need to embed a proper TTF font (e.g., DejaVu Sans) via @font-face so the PDF has glyphs to render as text.
+
+
+TTF stands for TrueType Font:
+        - It’s a common font file format (files end with .ttf).
+        - It stores each character as a scalable shape (so text looks sharp at any size).
+        - Works on almost all systems (Windows, macOS, Linux).
+        - On the web, you can include a .ttf with @font-face so your page—and exported PDFs—use that exact font.
+        - Example: Arial.ttf, DejaVuSans.ttf.
+
+
+What does savePDF return?
+
+        - savePDF(element, options, callback?) doesn’t return the PDF data—it just saves the file. If you need the data (e.g., Base64/Blob to upload), use the lower-level API: drawDOM(...) → exportPDF(...), which gives you the data URI before saving.
+
+Does it download the PDF to my computer? 
+        - Yes. Calling savePDF(...) triggers the browser to download a PDF file with the name you give it.
+
+
+**What about images—does it “fetch” them again?
+        - It uses the images your page is showing. Often the browser will reuse its cache, but if an image comes from another domain, that server must allow it (CORS). If CORS isn’t allowed, that image might not appear in the PDF.
+
+
+
+
+
+
+
+Here’s the simple flow from HTML to PDF (like what savePDF does), in plain words:
+
+1. Pick the area
+    You pass a DOM element (e.g., your resume container).
+
+2. Read styles
+    The library asks the browser for the element’s computed CSS (fonts, colors, sizes, margins).
+
+3. Lay it out
+    It measures boxes just like the page looks on screen (widths, heights, positions).
+
+4. Turn DOM into a drawing
+    It converts what it sees into a vector “scene”: text objects, rectangles, lines, images, SVG (canvas becomes an image).
+
+5. Paginate
+    That scene is split into PDF pages (A4/Letter) using your margins and scale. Long content continues on the next page.
+
+6. Embed assets
+    - Fonts (TTF/WOFF) are embedded so text stays selectable/searchable.
+    - Images are pulled from what the page already loaded (external images may need CORS).
+    - Links can be kept as PDF hyperlinks.
+
+7. Make the PDF & download
+    It packages the pages into a PDF file and triggers the browser download with your filename.
+
+That’s it: DOM → styles → layout → vector scene → paginate → embed → PDF download.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+USING drawDOM, exportPDF :
+
+import { drawDOM, exportPDF } from "@progress/kendo-drawing";
+
+const getResumePdfBlob = async () => {
+  if (!resumeRef.current) return null;
+
+  setDownloaded(true);
+  try {
+    const element = resumeRef.current as HTMLElement;
+
+    // 1) DOM -> drawing scene (Group)
+    const group = await drawDOM(element, {
+      paperSize: "A4",
+      scale: 0.75,
+      margin: { top: "1cm", left: "1cm", right: "1cm", bottom: "1cm" },
+    });
+
+    // 2) Scene -> PDF (Data URI string)
+    const dataUri = await exportPDF(group, {
+      paperSize: "A4",
+      margin: { top: "1cm", left: "1cm", right: "1cm", bottom: "1cm" },
+    });
+
+    // 3) Data URI -> Blob
+    const res = await fetch(dataUri);
+    const blob = await res.blob(); // type: application/pdf
+    return blob;
+  } finally {
+    setTimeout(() => setDownloaded(false), 2000);
+  }
+};
+
+
+If you also want to download it, add:
+const blob = await getResumePdfBlob();
+if (blob) {
+  const filename = `${resumeData.personalInfo.fullname.replace(/\s+/g, "_")}_Resume.pdf`;
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+
+
+
+
+
+// 1) DOM -> drawing scene (Group)
+const group = await drawDOM(element, {
+paperSize: "A4",
+scale: 0.75,
+margin: { top: "1cm", left: "1cm", right: "1cm", bottom: "1cm" },
+});
+
+
+await drawDOM(element, {...})
+        - Looks at the actual rendered HTML inside element (your resume section), reads its computed CSS (fonts, sizes, colors, positions), and turns it into an internal drawing scene.
+
+Returns group
+        - group is just Kendo’s object that holds that scene (think: a “canvas” made of shapes + text). It’s the input you’ll pass to exportPDF next.
+
+The options mean:
+        - paperSize: "A4" → Lay everything out for an A4 page.
+        - scale: 0.75 → Shrink the content to 75% so it fits nicely.
+        - margin: { top/left/right/bottom: "1cm" } → Keep 1 cm empty border on each side (the printable area is inside these margins).
+
+Important:
+        - This does not create or download a PDF yet. It only builds the “picture” of your DOM as vector/text objects. You then call exportPDF(group, ...) to turn that into an actual PDF file (or data URI/Blob).
+
+
+
+
+// 2) Scene -> PDF (Data URI string)
+const dataUri = await exportPDF(group, {
+paperSize: "A4",
+margin: { top: "1cm", left: "1cm", right: "1cm", bottom: "1cm" },
+});
+
+
+
+What it does:
+        - exportPDF(group, {...}) takes the drawing scene you built with drawDOM and turns it into a real PDF laid out as A4 with 1 cm margins.
+
+What you get back:
+        - It returns a Data URI string (something like "data:application/pdf;base64,JVBERi0xLjcK...").
+        - This is the whole PDF file, just encoded as text.
+
+What it does not do:
+        - It doesn’t download anything by itself. It only gives you the string.
+
+Why this is useful:
+    With that dataUri, you can:
+        - Make a Blob (to upload or preview):
+
+                    // 3) Data URI -> Blob
+                    const res = await fetch(dataUri);
+                    const blob = await res.blob(); // type: application/pdf
+                    return blob;
+
+                    what fetch(dataUri) does:
+
+                            - dataUri is a special URL that already contains the file data inside the string, e.g.
+                            data:application/pdf;base64,JVBERi0xL...
+
+                            - When you call fetch(dataUri):
+                                    - The browser sees the URL starts with data: (not http).
+                                    - It does not go to the internet. Instead, it parses the string locally.
+                                    - If it’s base64, it decodes that text back into the original bytes.
+                                    - It hands you a Response object as if a download succeeded.
+                                    - You can then do res.blob() / res.arrayBuffer() / res.text() to get the actual data.
+
+                            - Body of the response contains the actual file data (from the data URI), which you can read with:
+                                    - await res.blob() → a Blob (great for files like PDFs/images)
+                                    - await res.arrayBuffer() → raw bytes
+                                    - await res.text() → text
+                                    - await res.json() → if it’s JSON text
+
+                    Think of it like this: fetch(dataUri) tells the browser, “open this file that’s already baked into the string,” then gives you a normal Response wrapper so you can easily turn it into a Blob (or whatever you need). No network, all local.
+
+                    overview : 
+                        - fetch(dataUri) asks the browser to read that string like a file and gives you a Response object (no network call—it's all local).
+                        - res.blob() converts the response into a Blob (binary data).
+                        - Now blob is a real PDF file object (type: "application/pdf") you can upload, preview, or download.
+
+        - Download it yourself:
+
+                    const filename = `${resumeData.personalInfo.fullname.replace(/\s+/g, "_")}_Resume.pdf`;
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = filename;
+                    a.click();
+                    URL.revokeObjectURL(url);
+
+
+                    - Blob = the data itself (a file-like object in memory). Think: “here are the bytes of my PDF/image, with a MIME type.”
+                    - URL.createObjectURL(blob) = a temporary URL string (like blob:...) that points to that Blob so the browser/DOM can use it in places that want a URL (<img src>, <a href>, <iframe src>, etc.).
+                    - URL.revokeObjectURL(url) → frees the memory used by the blob URL (good cleanup).
+---------------
+
