@@ -449,3 +449,206 @@ Why this is useful:
                     - URL.revokeObjectURL(url) → frees the memory used by the blob URL (good cleanup).
 ---------------
 
+
+
+
+
+
+
+
+
+
+jszip :
+
+type NamedBlob = { blob: Blob; filename: string }; // e.g. "Anish_Singh_Chandel_Resume.pdf"
+
+async function zipAndDownloadResumes(files: NamedBlob[]) {
+  const zip = new JSZip();
+  const folder = zip.folder("resumes"); // put all PDFs inside a folder in the zip
+
+  files.forEach(({ blob, filename }) => {
+    const safeName = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
+    folder!.file(safeName, blob); // add each PDF blob with its name
+  });
+
+  // make the .zip as a Blob
+  const zipBlob = await zip.generateAsync({
+    type: "blob",
+    compression: "DEFLATE",
+    compressionOptions: { level: 6 }, // 1 (fast) .. 9 (smaller)
+  });
+
+  // download the .zip (no extra lib needed)
+  const url = URL.createObjectURL(zipBlob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "resumes.zip";
+  a.click();
+  URL.revokeObjectURL(url);
+
+  // If you use file-saver, you can do:
+  // saveAs(zipBlob, "resumes.zip");
+}
+
+
+
+
+
+// suppose you already have one or more resume blobs:
+const blob1 = await getResumePdfBlob(); // from your drawDOM/exportPDF flow
+const blob2 = await getResumePdfBlob(); // another one...
+
+await zipAndDownloadResumes([
+  { blob: blob1, filename: "Anish_Singh_Chandel_Resume.pdf" },
+  { blob: blob2, filename: "Jane_Doe_Resume.pdf" },
+]);
+
+
+
+
+
+
+
+const zip = new JSZip(); --> Make a new empty ZIP file in memory.
+
+const folder = zip.folder("resumes"); --> Create a folder named “resumes” inside that ZIP (like a directory).
+
+files.forEach(({ blob, filename }) => {
+  const safeName = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
+  folder!.file(safeName, blob); // add each PDF blob with its name
+});
+
+        - Go through each item in files (each has a PDF Blob and a name).
+        - If the name doesn’t end with .pdf, add .pdf to it → safeName.
+        - Put the Blob into the “resumes” folder with that file name.
+
+
+Tiny notes:
+    - blob = the actual PDF data.
+    - folder! = TypeScript “I promise this isn’t null.”
+    - This code just builds the ZIP in memory; you’ll still need to call zip.generateAsync({ type: 'blob' }) and then download it (with FileSaver.saveAs or a manual <a> click) to save it to disk.
+
+
+
+
+
+
+
+
+const zipBlob = await zip.generateAsync({
+  type: "blob",
+  compression: "DEFLATE",
+  compressionOptions: { level: 6 },
+});
+
+
+- zip.generateAsync(...): takes everything you added to the JSZip object and builds the final .zip file.
+- await: it’s done asynchronously (in the background); when it finishes, you get the result.
+- type: "blob": ask for the result as a Blob (a file-like object in memory) so you can download or upload it.
+- compression: "DEFLATE": use standard ZIP compression.
+
+                    DEFLATE is a lossless compression method used in ZIP files, gzip, and PNGs.
+                        - It shrinks data without losing any information.
+                        - Works by combining two ideas:
+                                - LZ77: finds repeated patterns and replaces them with short references.
+                                - Huffman coding: uses shorter codes for frequent bytes and longer codes for rare ones.
+                        - Result: smaller files that can be perfectly restored to the original.
+
+- compressionOptions: { level: 6 }: choose compression strength 1–9
+
+    1 = fastest, bigger file
+    9 = slowest, smallest file
+    6 = a good middle ground
+
+The result, zipBlob, is your ready-to-save ZIP file in memory.
+Example to download:
+
+import { saveAs } from "file-saver";
+saveAs(zipBlob, "resumes.zip");
+
+
+
+
+
+
+new JSZip() → makes an in-memory ZIP container (nothing on disk yet).
+zip.folder("resumes") → creates an in-memory folder entry inside that ZIP (it’s just path metadata like resumes/…, not a real folder on your computer).
+folder.file(name, blob) → adds your PDF blobs into that in-memory ZIP structure.
+
+Nothing is written to disk during the above steps.
+
+When you call: const zipBlob = await zip.generateAsync({ type: "blob", compression: "DEFLATE", ... });
+
+JSZip compresses everything and produces a single Blob in memory that represents the final .zip file. Still not on disk.
+
+It only touches the user’s disk when you trigger a download, e.g. with:
+
+        saveAs(zipBlob, "resumes.zip");
+        // or createObjectURL + <a>.click()
+
+
+Tiny notes:
+
+    - The “folder” is virtual (just part of each file’s path in the ZIP). ZIPs don’t store “real folders”—they store file paths; unzip tools create the folder from that path when extracting.
+    - Memory usage grows with your input files and the produced ZIP. For very large sets, keep an eye on memory.
+
+    - Some unzip apps create a new folder named after the ZIP file when extracting to avoid clutter. That’s just the extraction target, not a folder inside your ZIP. The internal structure comes only from the paths you set (like resumes/...).
+
+
+
+
+
+
+What is saveAs?
+
+    - saveAs is a tiny helper from the file-saver library that lets your web app download a file (like a PDF/ZIP/image/text) that you already have in JavaScript as a Blob, File, or even a URL.
+
+How do I use it?
+
+import { saveAs } from "file-saver";
+
+// Example: download a PDF Blob you already created
+saveAs(pdfBlob, "Resume.pdf");
+
+// Example: download a ZIP Blob
+saveAs(zipBlob, "resumes.zip");
+
+// Example: download a text file you build on the fly
+const blob = new Blob(["Hello"], { type: "text/plain;charset=utf-8" });
+saveAs(blob, "hello.txt");
+
+
+You can also pass a URL (needs CORS if it’s from another domain):  saveAs("https://example.com/file.pdf", "file.pdf");
+
+
+What does it do under the hood?
+
+For a Blob/File:
+
+    1) Creates a temporary object URL → URL.createObjectURL(blob).
+    2) Creates a hidden <a> tag with that URL and your filename.
+    3) Programmatically clicks the link to trigger the browser’s download.
+    4) Cleans up (revokes the temporary URL).
+    5) Uses special fallbacks for tricky browsers (like old IE / iOS Safari).
+
+
+For a URL: It tries to download it directly; if it’s cross-origin, the server must allow it (CORS). Otherwise the browser may block or just open it.
+
+What it can / can’t do
+
+        ✅ Triggers a download with the filename you provide.
+        ✅ Works across browsers and handles quirks for you.
+        ❌ Can’t choose the download folder (the browser/user decides).
+        ❌ If it’s a cross-origin URL without CORS, it might open in a tab or fail.
+
+
+Quick example with your ZIP: 
+
+        import { saveAs } from "file-saver";
+
+        async function downloadZip(zipBlob: Blob) {
+        saveAs(zipBlob, "resumes.zip"); // that’s it!
+        }
+
+
+That’s all: give saveAs your data and a name → it triggers a download in the user’s browser.
